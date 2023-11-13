@@ -23,8 +23,6 @@
 
 import { User } from '@/types/user.types';
 import { computed } from '@vue/reactivity';
-import { ref } from 'vue';
-
 
 const emit = defineEmits(['next']);
 
@@ -35,7 +33,6 @@ const props = defineProps({
     }
 });
 
-console.log("==>", props.userData.email)
 
 const emailRules = [
     (v:string) => !!v || 'Email é obrigatório',
