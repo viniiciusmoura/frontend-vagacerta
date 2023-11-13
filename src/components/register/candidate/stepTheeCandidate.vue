@@ -1,7 +1,7 @@
 <template>
-    <v-form>
-        <v-row >
-            <v-col>
+    <v-form >
+        <v-row class="mt-1">
+            <v-col >
                 <v-text-field
                     v-model="candidate.name"
                     label="Nome completo"
