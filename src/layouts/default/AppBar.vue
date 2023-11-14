@@ -1,13 +1,17 @@
 <template>
-  <v-app-bar flat>
-    <v-app-bar-title>
-      <v-icon icon="mdi-circle-slice-4" />
-
-      Base Preseto
-    </v-app-bar-title>
-
-
-
+  <v-app-bar app flat color="primary">
+    <v-img src="@/assets/VagaCerta.png" max-height="120" class="mr-2"></v-img>
+    <v-btn text to="/vagas">
+      <!-- <v-img src="@/assets/VagaCerta.png" max-height="120" class="mr-2"></v-img> -->
+      Vagas
+    </v-btn>
+    <v-btn text to="/empresas">
+      Empresas
+    </v-btn>
+    <v-btn text to="/candidato">
+      Candidato
+    </v-btn>
+    <v-spacer></v-spacer>
     <v-btn
       to="/register"
       min-width="164"
