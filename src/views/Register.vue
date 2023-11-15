@@ -45,6 +45,7 @@ import stepFourCompany from '@/components/register/company/stepFourCompany.vue';
 
 import { ref } from 'vue';
 import { User } from '@/types/user.types';
+import { StepItem, StepWindow } from '@/types/register.types';
 
 const step = ref<number>(1);
 
@@ -53,17 +54,15 @@ const userData = ref<User>({
     typeRegister: '',
 });
 
-const steps = ref([
+const steps = ref<StepItem[]>([
     {title: "Informação pessoal", value: 1},
     {title: "Tipo de conta", value: 2},
     {title: "Criando a conta", value: 3}
 ]);
 
-const stepsItems = ref([
+const stepsItems = ref<StepWindow[]>([
     {componet: stepOne, value: 1},
     {componet: stepTwo, value: 2},
-    {componet: stepTheeCandidate, value: 3},
-    {componet: stepFourCandidate, value: 4}
 ])
 
 
@@ -71,24 +70,28 @@ function nextStep() {
     step.value+=1;
 
     if (step.value === 3) {
+        
+        let stepItem: StepItem;
+        let stepWindows: StepWindow[] = [];
+
         if (userData.value.typeRegister === 'candidate') {
-            const stepCandidate = {title: "Experiência", value: 4};
-            steps.value.push(stepCandidate);
+            stepItem = { title: "Experiência", value: 4 };
+            stepWindows = [ { componet: stepTheeCandidate, value: 3 }, { componet: stepFourCandidate, value: 4 } ];
         }
 
         if (userData.value.typeRegister === 'company') {
-            const stepCompany = {title: "Oportunidades", value: 4};  
-            steps.value.push(stepCompany);
-
-            updateSteps(stepTheeCompany, 3);
-            updateSteps(stepFourCompany, 4);
+            stepItem = {title: "Oportunidades", value: 4}; 
+            stepWindows = [ { componet: stepTheeCompany, value: 3 }, {componet: stepFourCompany, value: 4} ]
         }    
+
+        addSteps(stepItem, stepWindows);
     } 
 }
 
 
-function updateSteps(componente:any, position:number){
-    const indexToReplace = stepsItems.value.findIndex(item => item.value === position);
-    stepsItems.value[indexToReplace].componet = componente;  
+function addSteps(stepItem:StepItem, stepWindows:StepWindow[]) 
+{
+    steps.value.push(stepItem);
+    stepsItems.value.push(...stepWindows);    
 }
 </script>

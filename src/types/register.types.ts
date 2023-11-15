@@ -1,4 +1,4 @@
-import { DefineComponent } from "vue";
+import { Component, DefineComponent } from "vue";
 import { User } from "./user.types";
 
 export type CandidateRegister = {
@@ -32,4 +32,14 @@ export type Vacancies = {
     foodVoucher: boolean;
     mealVoucher: boolean;
     formContract: string;
+}
+
+export type StepItem = {
+    title: string;
+    value: number;
+}
+
+export type StepWindow = {
+    componet: Component; 
+    value: number;
 }
