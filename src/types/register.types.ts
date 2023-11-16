@@ -1,20 +1,23 @@
 import { Component, DefineComponent } from "vue";
 import { User } from "./user.types";
 
+export type UserRegister = {
+    typeAccount: CandidateRegister | CompanyRegister | null;
+    user: User;
+}
+
 export type CandidateRegister = {
     name: string;
     generalRegister: string;
     cpf: string;
     sex: string;
     birthdate: string;
-    user: User | null;
 }
 
 export type CompanyRegister = {
     socialReason: string;
     cnpj: string;
     areaOfActivity: string;
-    user: User | null;
 }
 
 export type Experience = {

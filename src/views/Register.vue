@@ -1,5 +1,5 @@
 <template>
-   <v-container>
+   <v-container max-width="700">
         <v-stepper :model-value="step">
             <v-stepper-header>
                 <template v-for="item in steps" :key="item.value">
@@ -9,7 +9,7 @@
                         :step="item.value" 
                         :value="item.value"/>
 
-                    <v-divider 
+                    <v-divider class="divider"
                         v-if="item.value !== steps.length"
                         :key="item.value"
                     />
@@ -45,13 +45,16 @@ import stepFourCompany from '@/components/register/company/stepFourCompany.vue';
 
 import { ref } from 'vue';
 import { User } from '@/types/user.types';
-import { StepItem, StepWindow } from '@/types/register.types';
+import { StepItem, StepWindow, UserRegister } from '@/types/register.types';
 
 const step = ref<number>(1);
 
-const userData = ref<User>({
-    email: '',
-    typeRegister: '',
+const userData = ref<UserRegister>({
+    typeAccount: null,
+    user: {
+        email: '',
+        typeRegister: ''
+    }
 });
 
 const steps = ref<StepItem[]>([
@@ -62,7 +65,7 @@ const steps = ref<StepItem[]>([
 
 const stepsItems = ref<StepWindow[]>([
     {componet: stepOne, value: 1},
-    {componet: stepTwo, value: 2},
+    {componet: stepTwo, value: 2}
 ])
 
 
@@ -74,12 +77,12 @@ function nextStep() {
         let stepItem: StepItem;
         let stepWindows: StepWindow[] = [];
 
-        if (userData.value.typeRegister === 'candidate') {
+        if (userData.value.user.typeRegister === 'candidate') {
             stepItem = { title: "Experiência", value: 4 };
             stepWindows = [ { componet: stepTheeCandidate, value: 3 }, { componet: stepFourCandidate, value: 4 } ];
         }
 
-        if (userData.value.typeRegister === 'company') {
+        if (userData.value.user.typeRegister === 'company') {
             stepItem = {title: "Oportunidades", value: 4}; 
             stepWindows = [ { componet: stepTheeCompany, value: 3 }, {componet: stepFourCompany, value: 4} ]
         }    
@@ -88,10 +91,34 @@ function nextStep() {
     } 
 }
 
-
 function addSteps(stepItem:StepItem, stepWindows:StepWindow[]) 
 {
     steps.value.push(stepItem);
     stepsItems.value.push(...stepWindows);    
 }
 </script>
+<style>
+
+.divider{
+    color: white;
+}
+
+.v-stepper-header {
+    background: rgb(var(--v-theme-primary));
+    color: white;
+    font-weight: 500;
+}
+
+.v-stepper-item--selected .v-stepper-item__avatar.v-avatar, .v-stepper-item--complete .v-stepper-item__avatar.v-avatar {
+    background: white !important;
+    color: rgb(var(--v-theme-primary));
+    font-weight: 800;
+}
+@media (min-width: 1280px) {
+    .v-container {
+        max-width: 850px;
+    }
+}
+
+
+</style>
