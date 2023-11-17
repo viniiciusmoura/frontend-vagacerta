@@ -53,7 +53,10 @@ const userData = ref<UserRegister>({
     typeAccount: null,
     user: {
         email: '',
-        typeRegister: ''
+        typeRegister: '',
+        password: '',
+        termService: false,
+        termUser: true
     }
 });
 

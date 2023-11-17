@@ -13,6 +13,7 @@
                             label="Cargo"
                             type="text"
                             variant="outlined"
+                            :rules="isValidRules"
                             required />
                     </v-col>
                     <v-col>
@@ -29,6 +30,7 @@
                         <v-textarea
                             v-model="vacancies.description"
                             label="Descrição"
+                            :rules="isValidRules"
                             auto-grow
                             variant="outlined"
                             rows="3"
@@ -53,9 +55,25 @@
                             v-model="vacancies.formContract"
                             label="Forma de contrato"
                             :items="['CLT', 'CNPJ']"
-                            variant="outlined" />
+                            variant="outlined"
+                            required />
                     </v-col>
                 </v-row>
+                <v-row class="d-flex justify-center align-center mb-4 mt-4">
+                    <v-btn
+                        min-width="250"
+                        elevation="2"
+                        color="primary"
+                        variant="flat"
+                        :disabled="!disableButton"
+                        :loading="loading"
+                        @click="clickButton">
+                        Criar oportunidade
+                        <template v-slot:loader>
+                            <v-progress-circular indeterminate></v-progress-circular>
+                        </template>
+                    </v-btn>
+                </v-row>    
             </v-form>
         </v-card-text>
     </v-card>    
@@ -63,6 +81,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { Vacancies } from '@/types/register.types';
+import { computed } from 'vue';
 
 const vacancies = ref<Vacancies>({
     office: '',
@@ -73,8 +92,28 @@ const vacancies = ref<Vacancies>({
 	formContract: '',
 })
 
+const isValidRules = [
+    (v:string) => !!v || 'Razão social é obrigatório',
+    (v:string) => v.length > 3 || 'Deve ter no minimo 3 letras',
+];
+
+const loading = ref<boolean>(false);
 
 
+const disableButton = computed(() => {
+
+    const arrayValidations = [ 
+        ...isValidRules.map((rule) => rule(vacancies.value.office)),
+        ...isValidRules.map((rule) => rule(vacancies.value.description)),
+    ];
+
+    return arrayValidations.every(result => result === true);
+})
+
+function clickButton() 
+{
+    loading.value = true;
+}
 
 </script>
 

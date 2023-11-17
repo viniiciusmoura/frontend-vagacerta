@@ -59,17 +59,18 @@
         <v-row class="row d-flex">
             <v-col cols="12">
                 <v-checkbox 
+                    v-model="userData.user.termUser"
                     :rules="[v => !!v || 'Este campo é obrigatório']"
                     label="Aceito os termos e serviços da vagacerta"
                     color="indigo">
                 </v-checkbox>
                 <v-checkbox 
+                v-model="userData.user.termService"
                     label="Receber emails da vagacerta"
                     color="indigo">
                 </v-checkbox>
             </v-col>
         </v-row>    
-        {{ disableButton }}
         <v-row class="d-flex justify-center align-center mb-4 mt-4">
             <v-btn
                 min-width="250"
@@ -77,8 +78,12 @@
                 color="primary"
                 variant="flat"
                 :disabled="!disableButton"
+                :loading="loading"
                 @click="clickButton">
                 Criar conta
+                <template v-slot:loader>
+                    <v-progress-circular indeterminate></v-progress-circular>
+                </template>
             </v-btn>
         </v-row>    
     </v-form>
@@ -92,6 +97,7 @@ import { computed } from 'vue';
 
 const emit = defineEmits(['next']);
 const showPassword = ref<boolean>(false);
+const loading = ref<boolean>(false);
 
 const props = defineProps({
     userData: {
@@ -100,11 +106,13 @@ const props = defineProps({
     }
 });
 
+
 const company = ref<CompanyRegister>({
     socialReason: '',
     cnpj: '',
     areaOfActivity: '',
 });
+
 
 
 //validadtions
@@ -128,22 +136,31 @@ const passwordRules = [
     (v:string) => v.length > 6 || 'Deve ter no minimo 6 caracteres',
 ];
 
+
+
 const disableButton = computed(() => {
+
     const arrayValidations = [
-        ...socialReasonRules.map((rule) => rule(company.value.socialReason)), // Substitua 'valueForValidation' pelo valor que deseja validar
-        ...cnpjRules.map((rule) => rule(company.value.cnpj)), // Substitua 'valueForValidation' pelo valor que deseja validar
-        ...areaOfActivityRules.map((rule) => rule(company.value.areaOfActivity)), // Substitua 'valueForValidation' pelo valor que deseja validar
-        ...passwordRules.map((rule) => rule("123464")), // Substitua 'valueForValidation' pelo valor que deseja validar
-        props.userData.user.termService 
+        ...socialReasonRules.map((rule) => rule(company.value.socialReason)), 
+        ...cnpjRules.map((rule) => rule(company.value.cnpj)), 
+        ...areaOfActivityRules.map((rule) => rule(company.value.areaOfActivity)), 
+        ...passwordRules.map((rule) => rule(props.userData.user.password!)), 
+        props.userData.user.termUser
     ];
 
-    return arrayValidations.every((result) => !result);
-
+    return arrayValidations.every(result => result === true);
 })
 
-function clickButton() {
+function clickButton() 
+{
+    const companyObjet: CompanyRegister = {areaOfActivity: company.value.areaOfActivity, cnpj: company.value.cnpj, socialReason: company.value.socialReason}; 
+    props.userData.typeAccount = companyObjet;
+    
+    //create company 
+
     emit('next');    
 }
+
 </script>
 
 <style lang="scss" scoped>
