@@ -44,7 +44,6 @@ import stepTheeCompany from '@/components/register/company/stepTheeCompany.vue';
 import stepFourCompany from '@/components/register/company/stepFourCompany.vue';
 
 import { ref } from 'vue';
-import { User } from '@/types/user.types';
 import { StepItem, StepWindow, UserRegister } from '@/types/register.types';
 
 const step = ref<number>(1);
@@ -59,6 +58,7 @@ const userData = ref<UserRegister>({
         termUser: true
     }
 });
+
 
 const steps = ref<StepItem[]>([
     {title: "Informação pessoal", value: 1},

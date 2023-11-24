@@ -54,6 +54,8 @@ const disableButton = computed(() => {
 
 function clickButton() {
     loading.value = true;
+
+    
     emit('next');
 }
 
