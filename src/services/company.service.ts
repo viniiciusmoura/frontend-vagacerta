@@ -46,12 +46,16 @@ export default {
         }    
     },
 
-    async create(company:CompanyRegister)
+    async create(company:CompanyRegister, accessToken:string)
     {
+        const config = {
+            headers: {
+              Authorization: `Bearer ${accessToken}`
+            }
+          };
         try {
-            const response = await api.post(`companies/save`, { 
-                body: company
-            });
+            console.log()
+            const response = await api.post(`companies/save`, company, config);
             return response.data;
         } catch (error) {
             return error;

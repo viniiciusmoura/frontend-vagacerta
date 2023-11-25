@@ -39,7 +39,6 @@
                     label="Email"
                     type="email"
                     variant="outlined"
-                    readonly
                     required />
             </v-col>
             <v-col>
@@ -87,6 +86,8 @@
             </v-btn>
         </v-row>    
     </v-form>
+
+    <m-message v-model="alertMsg" :datamsg=datamsg />
 </template>
 
 <script setup lang="ts">
@@ -94,10 +95,19 @@ import { CompanyRegister, UserRegister } from '@/types/register.types';
 import { ref } from 'vue';
 import { cnpj } from 'cpf-cnpj-validator';
 import { computed } from 'vue';
+import MMessage from '@/components/shared/MMessage.vue';
+import companyService from '@/services/company.service';
+import userService from '@/services/user.service';
+import { Msg } from '@/types/generic.types';
+import { formToJSON } from 'axios';
+import { User } from '@/types/user.types';
+
 
 const emit = defineEmits(['next']);
 const showPassword = ref<boolean>(false);
 const loading = ref<boolean>(false);
+const datamsg = ref<Msg>({});
+const alertMsg = ref<boolean>(false);
 
 const props = defineProps({
     userData: {
@@ -106,11 +116,10 @@ const props = defineProps({
     }
 });
 
-
 const company = ref<CompanyRegister>({
-    socialReason: '',
-    cnpj: '',
-    areaOfActivity: '',
+    socialReason: 'aaaaaaaaaa',
+    cnpj: '25822757000191',
+    areaOfActivity: 'aaaaaaaa',
 });
 
 
@@ -151,15 +160,35 @@ const disableButton = computed(() => {
     return arrayValidations.every(result => result === true);
 })
 
-function clickButton() 
+async function clickButton() 
 {
+    loading.value = true;
     const companyObjet: CompanyRegister = {areaOfActivity: company.value.areaOfActivity, cnpj: company.value.cnpj, socialReason: company.value.socialReason}; 
     props.userData.typeAccount = companyObjet;
     
+    const response:any = await userService.create(props.userData.user);
+    
+    if (response && typeof response === 'object' && 'data' in response) {
+        const userLogin: User = {email: response.data.email, password: props.userData.user.password}
+        const responseToken = await userService.getToken(userLogin); 
+
+        const responseCompany:any = await companyService.create(companyObjet, responseToken.token);
+        datamsg.value = {message:"Usuário criado com sucesso.", color:"success", time: 3000};
+
+    } else {
+        if(response.response.data.errors.includes("already exists"))
+            datamsg.value = {message:"Ops! Email já cadastrado", color:"primary", time: 3000};
+        else
+            datamsg.value = {message:"Error: "+response.response.data.errors, color:"erromsg", time: 3000};
+    }
+    alertMsg.value = true;
+
+    loading.value = false;
     //create company 
 
-    emit('next');    
+    //emit('next');    
 }
+
 
 </script>
 
