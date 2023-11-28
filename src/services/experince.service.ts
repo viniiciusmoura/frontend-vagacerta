@@ -1,5 +1,6 @@
 import api from '../../vueconfig'
 import { Experience } from '@/types/experience.types';
+import authHeader from './token.service';
 export default {
     
     async getAll() 
@@ -16,10 +17,9 @@ export default {
     async create(experiences:Experience)
     {
         try {
-            const response = await api.post(`experiences/save`, { 
-                body: experiences
+            return await api.post(`experiences/save`, experiences, { headers: authHeader() }).then((response:any) => {
+                return response;
             });
-            return response.data;
         } catch (error) {
             return error;
         }

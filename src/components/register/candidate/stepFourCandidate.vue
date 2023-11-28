@@ -57,7 +57,7 @@
                             required />
                     </v-col>
                 </v-row>
-                <v-row class="d-flex justify-center align-center mb-4 mt-4">
+                <v-row class="d-flex justify-center align-center mb-2 mt-4">
                     <v-btn
                         min-width="250"
                         elevation="2"
@@ -71,17 +71,35 @@
                             <v-progress-circular indeterminate></v-progress-circular>
                         </template>
                     </v-btn>
-                </v-row>    
+                </v-row>   
+                <v-row class="d-flex justify-center align-center">
+                    <v-btn
+                        min-width="250"
+                        color="primary"
+                        variant="outlined"
+                        to="/">
+                        Pular
+                        <template v-slot:loader>
+                            <v-progress-circular indeterminate></v-progress-circular>
+                        </template>
+                    </v-btn>
+                </v-row>     
             </v-form>
         </v-card-text>
     </v-card>    
+    <m-message v-model="alertMsg" :datamsg=datamsg />
 </template>
 <script setup lang="ts">
 import { ref } from 'vue';
 import { Experience } from '@/types/register.types';
 import { computed } from '@vue/reactivity';
+import experinceService from '@/services/experince.service';
+import { Msg } from '@/types/generic.types';
+import MMessage from '@/components/shared/MMessage.vue';
 
 const loading = ref<boolean>(false);
+const datamsg = ref<Msg>({});
+const alertMsg = ref<boolean>(false);
 
 const experiencie = ref<Experience>({
     company: '',
@@ -107,10 +125,19 @@ const disableButton = computed(() => {
     return arrayValidations.every(result => result === true);
 })
 
-function clickButton() 
+async function clickButton() 
 {
     loading.value = true
-      
+
+    experiencie.value.user = localStorage.getItem('candidateid');
+    
+    const response: any = await experinceService.create(experiencie.value);
+    if(response){
+        datamsg.value = {message:"Oportunidade cadastrada com sucesso", color:"success", time: 3000};
+        alertMsg.value = true;
+    }
+    
+    loading.value = false;
 }
 </script>
 

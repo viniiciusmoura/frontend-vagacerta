@@ -39,7 +39,6 @@
                     label="Email"
                     type="email"
                     variant="outlined"
-                    readonly
                     required />
             </v-col>
             <v-col>
@@ -87,6 +86,8 @@
             </v-btn>
         </v-row>    
     </v-form>
+
+    <m-message v-model="alertMsg" :datamsg=datamsg />
 </template>
 
 <script setup lang="ts">
@@ -94,10 +95,17 @@ import { CompanyRegister, UserRegister } from '@/types/register.types';
 import { ref } from 'vue';
 import { cnpj } from 'cpf-cnpj-validator';
 import { computed } from 'vue';
+import MMessage from '@/components/shared/MMessage.vue';
+import companyService from '@/services/company.service';
+import userService from '@/services/user.service';
+import { Msg } from '@/types/generic.types';
+
 
 const emit = defineEmits(['next']);
 const showPassword = ref<boolean>(false);
 const loading = ref<boolean>(false);
+const datamsg = ref<Msg>({});
+const alertMsg = ref<boolean>(false);
 
 const props = defineProps({
     userData: {
@@ -106,11 +114,10 @@ const props = defineProps({
     }
 });
 
-
 const company = ref<CompanyRegister>({
     socialReason: '',
     cnpj: '',
-    areaOfActivity: '',
+    areaOfActivity: ''
 });
 
 
@@ -151,14 +158,42 @@ const disableButton = computed(() => {
     return arrayValidations.every(result => result === true);
 })
 
-function clickButton() 
+async function clickButton() 
 {
-    const companyObjet: CompanyRegister = {areaOfActivity: company.value.areaOfActivity, cnpj: company.value.cnpj, socialReason: company.value.socialReason}; 
-    props.userData.typeAccount = companyObjet;
-    
-    //create company 
+    loading.value = true;
+    const response:any = await userService.create(props.userData.user);
 
-    emit('next');    
+    const responseToken: any = await userService.login({email: response.data.email, password: props.userData.user.password}); 
+
+    company.value.user = response.data.id;
+
+    const responseCompany:any = await companyService.create(company.value);
+
+    datamsg.value = {message:"Empresa cadastrada com sucesso", color:"success", time: 3000};
+    
+    alertMsg.value = true;
+    loading.value = false;
+    emit('next');
+    
+    // if (response && typeof response === 'object' && 'data' in response) {
+    //     //Get token
+    //     const responseToken: any = await userService.login({email: response.data.email, password: props.userData.user.password}); 
+        
+    //     if(responseToken!=null || responseToken.data.token) {
+    //         company.value.user = response.data.id;
+
+    //         createCompany(company.value);
+    
+    //     }
+        
+        
+    // } else {
+    //     if(response.response.data.errors.includes("already exists"))
+    //         datamsg.value = {message:"Ops! Email já cadastrado", color:"primary", time: 3000};
+    //     else
+    //         datamsg.value = {message:"Error: "+response.response.data.errors, color:"erromsg", time: 3000};
+    // }
+   
 }
 
 </script>

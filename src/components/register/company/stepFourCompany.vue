@@ -59,7 +59,7 @@
                             required />
                     </v-col>
                 </v-row>
-                <v-row class="d-flex justify-center align-center mb-4 mt-4">
+                <v-row class="d-flex justify-center align-center mb-2 mt-4">
                     <v-btn
                         min-width="250"
                         elevation="2"
@@ -74,14 +74,32 @@
                         </template>
                     </v-btn>
                 </v-row>    
+                <v-row class="d-flex justify-center align-center">
+                    <v-btn
+                        min-width="250"
+                        color="primary"
+                        variant="outlined"
+                        to="/">
+                        Pular
+                        <template v-slot:loader>
+                            <v-progress-circular indeterminate></v-progress-circular>
+                        </template>
+                    </v-btn>
+                </v-row>    
             </v-form>
         </v-card-text>
     </v-card>    
+
+    <m-message v-model="alertMsg" :datamsg=datamsg />
 </template>
 <script setup lang="ts">
 import { ref } from 'vue';
 import { Vacancies } from '@/types/register.types';
 import { computed } from 'vue';
+import vacanciesService from '@/services/vacancies.service';
+import MMessage from '@/components/shared/MMessage.vue';
+import { Msg } from '@/types/generic.types';
+
 
 const vacancies = ref<Vacancies>({
     office: '',
@@ -89,8 +107,11 @@ const vacancies = ref<Vacancies>({
     salary: 0.00,
     foodVoucher: false,
     mealVoucher: false,
-	formContract: '',
-})
+	formContract: ''
+});
+
+const datamsg = ref<Msg>({});
+const alertMsg = ref<boolean>(false);
 
 const isValidRules = [
     (v:string) => !!v || 'Razão social é obrigatório',
@@ -110,10 +131,22 @@ const disableButton = computed(() => {
     return arrayValidations.every(result => result === true);
 })
 
-function clickButton() 
+async function clickButton() 
 {
     loading.value = true;
+     
+    vacancies.value.company = localStorage.getItem('companyid');
+
+    const response: any = await vacanciesService.create(vacancies.value);
+    if(response){
+        datamsg.value = {message:"Oportunidade cadastrada com sucesso", color:"success", time: 3000};
+        alertMsg.value = true;
+    }
+    
+    loading.value = false;
 }
+
+
 
 </script>
 

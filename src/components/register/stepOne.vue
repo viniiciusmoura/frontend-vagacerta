@@ -24,14 +24,24 @@
             </v-btn>
         </v-row>
     </v-form>
+
+
+    <m-message v-model="alertMsg" :datamsg=datamsg />
+
 </template>
 <script setup lang="ts">
 
+import userService from '@/services/user.service';
 import { UserRegister } from '@/types/register.types';
 import { computed } from '@vue/reactivity';
 import { ref } from 'vue';
+import MMessage from '../shared/MMessage.vue';
+import { Msg } from "@/types/generic.types";
+
 
 const loading = ref<boolean>(false);
+const alertMsg = ref<boolean>(false);
+const datamsg = ref<Msg>({});
 
 const emit = defineEmits(['next']);
 
@@ -55,8 +65,23 @@ const disableButton = computed(() => {
 function clickButton() {
     loading.value = true;
 
+    userService.getEmail(props.userData.user.email)
+    .then((data) => {
+        //Existe email cadastrado
+        if(data){
+            datamsg.value = {message: "Existe um usuário cadastrado com esse email!", color: "erromsg", time: 3000};
+            alertMsg.value=true
+            return
+        }
+        
+        emit('next');
+        
+    }).catch((error) => {
+        console.log("erro", error);
+    });
+
+    loading.value = false;
     
-    emit('next');
 }
 
 </script>

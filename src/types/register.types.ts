@@ -12,12 +12,14 @@ export type CandidateRegister = {
     cpf: string;
     sex: string;
     birthdate: string;
+    user?: number;
 }
 
 export type CompanyRegister = {
     socialReason: string;
     cnpj: string;
     areaOfActivity: string;
+    user?: number; 
 }
 
 export type Experience = {
@@ -26,6 +28,7 @@ export type Experience = {
     description: string;
     startDate: string;
     endDate: string;
+    user?: any;
 }
 
 export type Vacancies = {
@@ -35,6 +38,7 @@ export type Vacancies = {
     foodVoucher: boolean;
     mealVoucher: boolean;
     formContract: string;
+    company?: any
 }
 
 export type StepItem = {

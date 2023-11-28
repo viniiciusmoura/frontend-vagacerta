@@ -1,5 +1,6 @@
 import api from '../../vueconfig'
 import { CompanyRegister } from '@/types/register.types';
+import authHeader from './token.service';
 export default {
     
     async getAll() 
@@ -49,10 +50,12 @@ export default {
     async create(company:CompanyRegister)
     {
         try {
-            const response = await api.post(`companies/save`, { 
-                body: company
+            return await api.post(`companies/save`, company, { headers: authHeader() }).then((response:any) => {
+                if(response.data){
+                    localStorage.setItem('companyid',response.data.id);
+                }
+                return response;
             });
-            return response.data;
         } catch (error) {
             return error;
         }
