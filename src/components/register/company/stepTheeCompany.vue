@@ -99,8 +99,6 @@ import MMessage from '@/components/shared/MMessage.vue';
 import companyService from '@/services/company.service';
 import userService from '@/services/user.service';
 import { Msg } from '@/types/generic.types';
-import { formToJSON } from 'axios';
-import { User } from '@/types/user.types';
 
 
 const emit = defineEmits(['next']);
@@ -117,9 +115,9 @@ const props = defineProps({
 });
 
 const company = ref<CompanyRegister>({
-    socialReason: 'aaaaaaaaaa',
-    cnpj: '25822757000191',
-    areaOfActivity: 'aaaaaaaa',
+    socialReason: '',
+    cnpj: '',
+    areaOfActivity: ''
 });
 
 
@@ -163,32 +161,40 @@ const disableButton = computed(() => {
 async function clickButton() 
 {
     loading.value = true;
-    const companyObjet: CompanyRegister = {areaOfActivity: company.value.areaOfActivity, cnpj: company.value.cnpj, socialReason: company.value.socialReason}; 
-    props.userData.typeAccount = companyObjet;
-    
     const response:any = await userService.create(props.userData.user);
+
+    const responseToken: any = await userService.login({email: response.data.email, password: props.userData.user.password}); 
+
+    company.value.user = response.data.id;
+
+    const responseCompany:any = await companyService.create(company.value);
+
+    datamsg.value = {message:"Empresa cadastrada com sucesso", color:"success", time: 3000};
     
-    if (response && typeof response === 'object' && 'data' in response) {
-        const userLogin: User = {email: response.data.email, password: props.userData.user.password}
-        const responseToken = await userService.getToken(userLogin); 
-
-        const responseCompany:any = await companyService.create(companyObjet, responseToken.token);
-        datamsg.value = {message:"Usuário criado com sucesso.", color:"success", time: 3000};
-
-    } else {
-        if(response.response.data.errors.includes("already exists"))
-            datamsg.value = {message:"Ops! Email já cadastrado", color:"primary", time: 3000};
-        else
-            datamsg.value = {message:"Error: "+response.response.data.errors, color:"erromsg", time: 3000};
-    }
     alertMsg.value = true;
-
     loading.value = false;
-    //create company 
+    emit('next');
+    
+    // if (response && typeof response === 'object' && 'data' in response) {
+    //     //Get token
+    //     const responseToken: any = await userService.login({email: response.data.email, password: props.userData.user.password}); 
+        
+    //     if(responseToken!=null || responseToken.data.token) {
+    //         company.value.user = response.data.id;
 
-    //emit('next');    
+    //         createCompany(company.value);
+    
+    //     }
+        
+        
+    // } else {
+    //     if(response.response.data.errors.includes("already exists"))
+    //         datamsg.value = {message:"Ops! Email já cadastrado", color:"primary", time: 3000};
+    //     else
+    //         datamsg.value = {message:"Error: "+response.response.data.errors, color:"erromsg", time: 3000};
+    // }
+   
 }
-
 
 </script>
 

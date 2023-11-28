@@ -1,5 +1,6 @@
 import api from '../../vueconfig'
 import { CompanyRegister } from '@/types/register.types';
+import authHeader from './token.service';
 export default {
     
     async getAll() 
@@ -46,17 +47,15 @@ export default {
         }    
     },
 
-    async create(company:CompanyRegister, accessToken:string)
+    async create(company:CompanyRegister)
     {
-        const config = {
-            headers: {
-              Authorization: `Bearer ${accessToken}`
-            }
-          };
         try {
-            console.log()
-            const response = await api.post(`companies/save`, company, config);
-            return response.data;
+            return await api.post(`companies/save`, company, { headers: authHeader() }).then((response:any) => {
+                if(response.data){
+                    localStorage.setItem('companyid',response.data.id);
+                }
+                return response;
+            });
         } catch (error) {
             return error;
         }

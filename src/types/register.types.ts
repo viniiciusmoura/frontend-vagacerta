@@ -18,6 +18,7 @@ export type CompanyRegister = {
     socialReason: string;
     cnpj: string;
     areaOfActivity: string;
+    user?: number; 
 }
 
 export type Experience = {
@@ -35,6 +36,7 @@ export type Vacancies = {
     foodVoucher: boolean;
     mealVoucher: boolean;
     formContract: string;
+    company?: any
 }
 
 export type StepItem = {

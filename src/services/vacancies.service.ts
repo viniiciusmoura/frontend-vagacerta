@@ -1,5 +1,6 @@
 import api from '../../vueconfig'
 import { Vacancies } from '@/types/vacancies.types';
+import authHeader from './token.service';
 export default {
     
     async getAll() 
@@ -38,9 +39,7 @@ export default {
     async create(vacancies:Vacancies)
     {
         try {
-            const response = await api.post(`vacancies/save`, { 
-                body: vacancies
-            });
+            const response = await api.post(`vacancies/save`, vacancies, { headers: authHeader() });
             return response.data;
         } catch (error) {
             return error;

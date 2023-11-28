@@ -12,15 +12,28 @@ export default {
         }    
     },
 
-    async getToken(user:User) 
+    async login(user:User) 
     {
+        const token: any = localStorage.getItem('user');
+        if (token) {
+            return token;
+        }
         try{
-            const response = await api.post(`auth/login`, user)
-            return response.data
+            return api.post(`auth/login`, user).then((response:any) => {
+                if (response.data.token) {
+                    localStorage.setItem('user', response.data.token);
+                }
+                return response;
+            });
         }catch (erro) {
             return erro;
         }    
     },
+
+    async logout() {
+        localStorage.removeItem('user');
+    },
+
     async create(user:User)
     {
         try {

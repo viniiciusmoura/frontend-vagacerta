@@ -67,7 +67,6 @@ function clickButton() {
 
     userService.getEmail(props.userData.user.email)
     .then((data) => {
-        console.log("===>", data)
         //Existe email cadastrado
         if(data){
             datamsg.value = {message: "Existe um usuário cadastrado com esse email!", color: "erromsg", time: 3000};
