@@ -30,6 +30,22 @@ const routes = [
       },
     ],
   },
+  {
+    path: '/',
+    component: () => import('@/layouts/default/Default.vue'),
+    children: [
+      {
+        path: 'vagas',
+        name: 'Vagas',
+        component: () => import('@/views/Vagas.vue'),
+      },
+      {
+        path: 'empresas',
+        name: 'Empresas',
+        component: () => import('@/views/Empresas.vue'),
+      },
+    ],
+  },
 ]
 
 const router = createRouter({

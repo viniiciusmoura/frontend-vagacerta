@@ -1,14 +1,25 @@
 <template>
   <v-app-bar app flat color="primary">
-    <v-img src="@/assets/VagaCerta.png" max-height="120" class="mr-2"></v-img>
-    <v-btn text to="/vagas">
-      <!-- <v-img src="@/assets/VagaCerta.png" max-height="120" class="mr-2"></v-img> -->
+    <v-img to="/candidato" src="@/assets/VagaCerta.png" max-height="120" class="mr-2"></v-img>
+    <v-btn
+      to="/vagas"
+      min-width="164"
+      color="primary"
+      variant="flat">
       Vagas
     </v-btn>
-    <v-btn text to="/empresas">
+    <v-btn
+      to="/empresas"
+      min-width="164"
+      color="primary"
+      variant="flat">
       Empresas
     </v-btn>
-    <v-btn text to="/candidato">
+    <v-btn
+      to="/candidato"
+      min-width="164"
+      color="primary"
+      variant="flat">
       Candidato
     </v-btn>
     <v-spacer></v-spacer>
