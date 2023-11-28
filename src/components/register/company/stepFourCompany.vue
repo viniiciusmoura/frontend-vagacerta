@@ -138,7 +138,6 @@ async function clickButton()
     vacancies.value.company = localStorage.getItem('companyid');
 
     const response: any = await vacanciesService.create(vacancies.value);
-    console.log(response);
     if(response){
         datamsg.value = {message:"Oportunidade cadastrada com sucesso", color:"success", time: 3000};
         alertMsg.value = true;

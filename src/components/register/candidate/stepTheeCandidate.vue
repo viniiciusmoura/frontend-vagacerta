@@ -108,13 +108,22 @@
             </v-btn>
         </v-row>    
     </v-form>
+
+    <m-message v-model="alertMsg" :datamsg=datamsg />
+
 </template>
 <script setup lang="ts">
 import { ref } from 'vue';
 import { CandidateRegister, UserRegister } from "../../../types/register.types";
 import { cpf } from 'cpf-cnpj-validator';
 import { computed } from 'vue';
+import candidateService from '@/services/candidate.service';
+import userService from '@/services/user.service';
+import MMessage from '@/components/shared/MMessage.vue';
+import { Msg } from '@/types/generic.types';
 
+const datamsg = ref<Msg>({});
+const alertMsg = ref<boolean>(false);
 
 const emit = defineEmits(['next']);
 
@@ -158,14 +167,21 @@ const disableButton = computed(() => {
     return arrayValidations.every(result => result === true);
 })
 
-function clickButton() 
+async function clickButton() 
 {
     loading.value = false
-    const candidateObj : CandidateRegister = {cpf: candidate.value.cpf, birthdate: candidate.value.birthdate, 
-                                            name: candidate.value.name, sex: candidate.value.sex, generalRegister: candidate.value.generalRegister};
-    props.userData.typeAccount = candidateObj;
-    console.log("===>", props.userData)
-    loading.value = false
+    const response:any = await userService.create(props.userData.user);
+    
+    const responseToken: any = await userService.login({email: response.data.email, password: props.userData.user.password}); 
+
+    candidate.value.user = response.data.id;
+
+    const responseCandidate: any = await candidateService.create(candidate.value);
+
+    datamsg.value = {message:"Candidato cadastrada com sucesso", color:"success", time: 3000};
+    
+    alertMsg.value = true;
+    loading.value = false;
     emit('next');    
 }
 </script>

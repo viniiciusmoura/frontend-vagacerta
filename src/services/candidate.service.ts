@@ -1,11 +1,12 @@
 import api from '../../vueconfig'
 import { CandidateRegister } from '@/types/register.types';
+import authHeader from './token.service';
 export default {
     
     async getAll() 
     {
         try{
-            const response = await api.get(`cadidates`)
+            const response = await api.get(`candidates`)
             return response.data
         }catch (erro)
         {
@@ -16,7 +17,7 @@ export default {
     async getCity(city:string) 
     {
         try{
-            const response = await api.get(`cadidates/city/${city}`)
+            const response = await api.get(`candidates/city/${city}`)
             return response.data
         }catch (erro)
         {
@@ -27,7 +28,7 @@ export default {
     async getState(state:string) 
     {
         try{
-            const response = await api.get(`cadidates/state/${state}`)
+            const response = await api.get(`candidates/state/${state}`)
             return response.data
         }catch (erro)
         {
@@ -38,7 +39,7 @@ export default {
     async getOffice(office:string) 
     {
         try{
-            const response = await api.get(`cadidates/office/${office}`)
+            const response = await api.get(`candidates/office/${office}`)
             return response.data
         }catch (erro)
         {
@@ -49,10 +50,12 @@ export default {
     async create(cadidate:CandidateRegister)
     {
         try {
-            const response = await api.post(`cadidates/save`, { 
-                body: cadidate
+            return await api.post(`candidates/save`, cadidate, { headers: authHeader() }).then((response:any) => {
+                if(response.data){
+                    localStorage.setItem('candidateid',response.data.id);
+                }
+                return response;
             });
-            return response.data;
         } catch (error) {
             return error;
         }
@@ -61,7 +64,7 @@ export default {
     async update(cadidate:CandidateRegister, id:number)
     {
         try {
-            const response = await api.patch(`cadidates/update/${id}`, { 
+            const response = await api.patch(`candidates/update/${id}`, { 
                 body: cadidate
             });
             return response.data;
@@ -73,7 +76,7 @@ export default {
     async delete(id:number)
     {
         try {
-            const response = await api.delete(`cadidates/delete/${id}`);
+            const response = await api.delete(`candidates/delete/${id}`);
             return response.status;
         } catch (error) {
             return error;

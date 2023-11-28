@@ -12,6 +12,7 @@ export type CandidateRegister = {
     cpf: string;
     sex: string;
     birthdate: string;
+    user?: number;
 }
 
 export type CompanyRegister = {
@@ -27,6 +28,7 @@ export type Experience = {
     description: string;
     startDate: string;
     endDate: string;
+    user?: any;
 }
 
 export type Vacancies = {
