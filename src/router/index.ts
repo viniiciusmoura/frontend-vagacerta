@@ -49,6 +49,16 @@ const routes = [
         name: 'Candidato',
         component: () => import('@/views/Candidato.vue'),
       },
+      {
+        path: 'configuracao-empresa',
+        name: 'configuracao-empresa',
+        component: () => import('@/views/Configuracao-empresa.vue'),
+      },
+      {
+        path: 'configuracao-candidato',
+        name: 'configuracao-candidato',
+        component: () => import('@/views/Configuracao-candidato.vue'),
+      },
     ],
   },
 ]

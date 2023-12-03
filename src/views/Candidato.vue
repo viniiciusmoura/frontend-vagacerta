@@ -24,7 +24,7 @@
           <v-card>
             <v-card-title >Detalhes do candidato</v-card-title>
             <v-card-text>
-              Detalhes da vaga aqui.
+              Detalhes da candidato aqui. 
             </v-card-text>
             <v-card-actions>
               <v-btn @click="dialog = false" color="primary" class="ml-auto">Fechar</v-btn>
