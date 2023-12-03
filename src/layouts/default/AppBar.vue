@@ -23,7 +23,23 @@
       Candidato
     </v-btn>
     <v-spacer></v-spacer>
+
+
     <v-btn
+      v-if="!token"
+      to="/login"
+      min-width="164"
+      color="primary"
+      variant="flat">
+      <v-icon
+        icon="mdi-account"
+        size="large"
+        start/>
+      Login
+    </v-btn>
+
+    <v-btn
+      v-if="!token"
       to="/register"
       min-width="164"
       color="primary"
@@ -61,10 +77,11 @@
     </v-menu>
 
   </v-app-bar>
-
+  
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
-  //
+
+const token = localStorage.getItem("user");
+
 </script>

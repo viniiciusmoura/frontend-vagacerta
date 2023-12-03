@@ -14,6 +14,17 @@ export default {
         }    
     },
 
+    async getExperienceUser(id:number) 
+    {
+        try{
+            const response = await api.get(`experiences/candidate/${id}`, { headers: authHeader() })
+            return response.data
+        }catch (erro)
+        {
+            return erro;
+        }    
+    },
+
     async create(experiences:Experience)
     {
         try {

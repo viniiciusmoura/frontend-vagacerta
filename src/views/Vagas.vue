@@ -2,18 +2,18 @@
     <v-container class="fill-height">
       <v-responsive class="align-center text-center fill-height">
         <v-row>
-          <v-col v-for="i in 6" :key="i" cols="4"> 
+          <v-col v-for="i in data" :key="i.id" cols="4"> 
             <v-card>
-              <v-card-title>Vagas</v-card-title>
+              <v-card-title>{{ i.office }}</v-card-title>
               <v-img src="@/assets/oportunidade.png" max-height="50" aspect-ratio="1.5"></v-img> 
               <v-card-text>
                 <div>
-                  Java Dev
+                  {{ i.description }}
                 </div>
                 <div>
-                  Salário: 1.000,00
+                  Salário: {{i.salary}}
                 </div>
-                <v-btn color="primary" @click="dialog = true">
+                <v-btn v-if="token" color="primary"  @click="maisinfo(i)" :loading="loading">
                   Mais informações
                 </v-btn>
               </v-card-text>
@@ -24,7 +24,23 @@
           <v-card>
             <v-card-title >Detalhes da Vaga</v-card-title>
             <v-card-text>
-              Detalhes da vaga aqui.
+              <h4>Cargo: {{ details?.office }}</h4><br>
+              <h4>Empresa: {{ details?.company?.socialReason }}</h4>
+              <v-chip color="success"
+                v-if="details?.foodVoucher">
+                Vale-alimentação
+              </v-chip>
+
+              <v-chip color="success"
+                v-if="details?.mealVoucher">
+                Vale-Refeição
+              </v-chip>
+              <br>
+              Descrição: {{ details?.description }}<br>
+              Salario: R$ {{ details?.salary }}
+              <v-chip color="primary">
+                {{details?.formContract}}
+              </v-chip>
             </v-card-text>
             <v-card-actions>
               <v-btn @click="dialog = false" color="primary" class="ml-auto">Fechar</v-btn>
@@ -35,9 +51,45 @@
     </v-container>
   </template>
   
-  <script setup>
-  import { ref } from 'vue';
+<script lang="ts" setup>
+import vacanciesService from '@/services/vacancies.service';
+import { CompanyRegister } from '@/types/register.types';
+import { Vacancies } from '@/types/vacancies.types';
+import { onMounted } from 'vue';
+import { ref } from 'vue';
+
+const loading = ref<boolean>(false);
+const dialog = ref(false);
+const data = ref<Vacancies[]>([]);
+const details = ref<Vacancies>();
+const token = ref<string|null>();
+
+
+
+async function vacancies() 
+{
+  const response: any = await vacanciesService.getAll();
   
-  const dialog = ref(false);
-  </script>
+  if (response) {
+    data.value = response;
+  }
+}
+
+onMounted(() =>{
+  vacancies();
+  token.value = localStorage.getItem("user");
+})
+
+async function maisinfo(company:Vacancies) 
+{
+  loading.value = true
+  
+  details.value = company
+
+
+  loading.value = false
+  dialog.value = true
+}
+
+</script>
   

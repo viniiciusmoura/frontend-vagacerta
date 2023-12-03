@@ -75,7 +75,7 @@
             </v-col>
         </v-row>
     
-
+        <Address @address="setAddress"/>
 
         <v-row class="row d-flex">
             <v-col cols="12">
@@ -121,10 +121,13 @@ import candidateService from '@/services/candidate.service';
 import userService from '@/services/user.service';
 import MMessage from '@/components/shared/MMessage.vue';
 import { Msg } from '@/types/generic.types';
+import { AddressType } from '@/types/address.types';
+import addressService from '@/services/address.service';
+import Address from '@/components/shared/Address.vue';
 
 const datamsg = ref<Msg>({});
 const alertMsg = ref<boolean>(false);
-
+const address = ref<AddressType>();
 const emit = defineEmits(['next']);
 
 const showPassword = ref<boolean>(false);
@@ -178,11 +181,27 @@ async function clickButton()
 
     const responseCandidate: any = await candidateService.create(candidate.value);
 
+    if (address?.value !== undefined) {
+        address.value.candidate = responseCandidate.data.id;
+        const responseAddress: any = await addressService.create(address.value);
+    }
+
     datamsg.value = {message:"Candidato cadastrada com sucesso", color:"success", time: 3000};
     
     alertMsg.value = true;
     loading.value = false;
     emit('next');    
+}
+
+function setAddress(addresst:AddressType) 
+{
+    if (validadtionsAddress(addresst)) {
+        address.value = addresst;    
+    }
+}
+
+function validadtionsAddress(objeto:Object) {
+  return Object.values(objeto).every(valor => valor !== '');
 }
 </script>
 
