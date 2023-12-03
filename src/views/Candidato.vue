@@ -29,8 +29,7 @@
 
 
         <v-dialog v-model="dialog" max-width="600">
-          <v-card>
-           
+
            <v-card
              prepend-icon="mdi-home">
              <template v-slot:title>
@@ -61,7 +60,7 @@
          <v-card-actions>
            <v-btn  @click="dialog = false" color="primary" class="ml-auto">Fechar</v-btn>
          </v-card-actions>
-       </v-card>
+        </v-card>
         </v-dialog>
 
       </v-responsive>

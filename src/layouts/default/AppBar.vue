@@ -50,6 +50,32 @@
         start/>
       Cadastrar
     </v-btn>
+
+    <v-menu offset-y rounded>
+      <template v-slot:activator="{ props }">
+        <v-btn
+          v-bind="props"
+          min-width="48"
+          color="primary"
+          variant="flat"
+        >
+          <v-icon>mdi-dots-vertical</v-icon>
+        </v-btn>
+      </template>
+
+      <v-list>
+        <v-list-item to="/configuracao-empresa">
+          <v-list-item-title>Configuração Empresa</v-list-item-title>
+        </v-list-item>
+        <v-list-item to="/configuracao-candidato">
+          <v-list-item-title>Configuração Candidato</v-list-item-title>
+        </v-list-item>
+        <v-list-item>
+          <v-list-item-title>Sair</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-menu>
+
   </v-app-bar>
   
 </template>
@@ -58,6 +84,4 @@
 
 const token = localStorage.getItem("user");
 
-
-  //
 </script>

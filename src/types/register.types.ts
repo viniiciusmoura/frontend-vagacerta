@@ -23,6 +23,7 @@ export type CompanyRegister = {
 }
 
 export type Experience = {
+    id?:number;
     company: string;
     office: string;
     description: string;
@@ -32,6 +33,7 @@ export type Experience = {
 }
 
 export type Vacancies = {
+    id?:number;
     office: string;
     description: string;
     salary: number;
