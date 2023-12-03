@@ -12,7 +12,7 @@
             <v-text-field
                 v-model="password"
                 label="Senha"
-                class="pwdInput"
+                class="pwdInput mt-2"
                 :type="showPassword ? 'text' : 'password'"
                 :append-icon="showPassword ? 'mdi-eye-outline' : 'mdi-eye-off'"
                 @click:append="showPassword=!showPassword"
