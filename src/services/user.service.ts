@@ -24,6 +24,8 @@ export default {
                     localStorage.setItem('user', response.data.token);
                 }
                 return response;
+            }).catch((error) => {
+                return error.response.data;
             });
         }catch (erro) {
             return erro;

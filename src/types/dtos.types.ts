@@ -16,3 +16,12 @@ export type CandidateDTO = {
     sex: string;
     birthdate: string;
 }
+
+export type ExperienceDTO = {
+    id: number;
+    company: string;
+    office: string;
+    description: string;
+    startDate: string;
+    endDate: string;
+}

@@ -19,7 +19,7 @@
                   </v-chip>
                   {{item.cnpj}}
                 </div>
-                <v-btn color="primary" class="mt-5" @click="maisinfo(item.id)" :loading="loading">
+                <v-btn v-if="token" color="primary" class="mt-5" @click="maisinfo(item.id)" :loading="loading">
                   Mais informações
                 </v-btn>
               </v-card-text>
@@ -38,8 +38,8 @@
                 </template>
 
                 <v-card-text>
-                  <v-row v-for="item in address" :key="item.id" class="pa-2">
-                    <h7>{{ `${item.id}° Endereço: ${item.city}, ${item.state}, ${item.neighborhood}
+                  <v-row v-for="(item, index) in address" :key="item.id" class="pa-2">
+                    <h7>{{ `${index+1}° Endereço: ${item.city}, ${item.state}, ${item.neighborhood}
         Complemento: ${item.address}` }}</h7>
                   </v-row>
                 </v-card-text>
@@ -52,8 +52,8 @@
                 </template>
 
                 <v-card-text>
-                  <v-row v-for="item in vacancies" :key="item.id" class="pa-2">
-                    <h7>{{ `N° ${item.id}  CARGO: ${item.office} SALÁRIO: ${item.salary} ` }} <v-chip color="primary">ver mais</v-chip> </h7>
+                  <v-row v-for="(item, index) in vacancies" :key="item.id" class="pa-2">
+                    <h7>{{ `N° ${index+1}  CARGO: ${item.office} SALÁRIO: ${item.salary} ` }} <v-chip color="primary">ver mais</v-chip> </h7>
                   </v-row>
                 </v-card-text>
               </v-card>
@@ -86,6 +86,8 @@ const loading = ref<boolean>(false);
 const address = ref<AddressType[]>([]);
 const vacancies = ref<Vacancies[]>([]);
 
+const token = ref<string|null>();
+
 async function companies() 
 {
   
@@ -96,7 +98,10 @@ async function companies()
 
 onMounted(() => {
   companies();
+  token.value = localStorage.getItem("user");
 })
+
+
 
 async function maisinfo(id:number) 
 {
@@ -106,7 +111,6 @@ async function maisinfo(id:number)
 
   if (responseAddress && responseVacancies) {
     address.value = responseAddress;
-    console.log("==>", responseVacancies)
     vacancies.value = responseVacancies;
   }
 

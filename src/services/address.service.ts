@@ -25,6 +25,16 @@ export default {
         }    
     },
 
+    async getAddressCandidate(id:number) 
+    {
+        try{
+            const response = await api.get(`address/candidate/${id}`, { headers: authHeader() })
+            return response.data
+        }catch (erro)
+        {
+            return erro;
+        }    
+    },
     async getAddress(cep:string)
     {
         try{

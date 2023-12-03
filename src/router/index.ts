@@ -1,5 +1,6 @@
 // Composables
 import { createRouter, createWebHistory } from 'vue-router'
+import Home from '@/views/Home.vue';
 
 const routes = [
   {
@@ -8,11 +9,8 @@ const routes = [
     children: [
       {
         path: '',
-        name: 'Home',
-        // route level code-splitting
-        // this generates a separate chunk (Home-[hash].js) for this route
-        // which is lazy-loaded when the route is visited.
-        component: () => import('@/views/Home.vue'),
+        name: '',
+        component: Home,
       },
     ],
   },
@@ -29,6 +27,16 @@ const routes = [
         component: () => import('@/views/Register.vue'),
       },
     ],
+  },
+  {
+    path: '/login',
+    component: () => import('@/layouts/default/Default.vue'),
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/Login.vue'),
+      }
+    ]
   },
   {
     path: '/',

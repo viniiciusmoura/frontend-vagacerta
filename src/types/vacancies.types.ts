@@ -1,3 +1,5 @@
+import { CompanyRegister } from "./register.types";
+
 export type Vacancies = {
     id?: number;
     office: string;
@@ -6,5 +8,5 @@ export type Vacancies = {
     foodVoucher: boolean;
     mealVoucher: boolean;
     formContract: string;
-    company?: number;
+    company?: CompanyRegister;
 }
