@@ -6,8 +6,11 @@ export default {
     async getAll() 
     {
         try{
-            const response = await api.get(`companies`)
-            return response.data
+            return api.get(`companies`).then((response:any) => {
+                if(response.data){
+                    return response;
+                }
+            });
         }catch (erro)
         {
             return erro;

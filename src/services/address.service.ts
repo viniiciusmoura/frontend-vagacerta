@@ -1,5 +1,6 @@
 import api from '../../vueconfig'
-import { Address } from '@/types/address.types';
+import { AddressType } from '@/types/address.types';
+import authHeader from './token.service';
 export default {
     
     async getAll() 
@@ -13,19 +14,39 @@ export default {
         }    
     },
 
-    async create(address:Address)
+    async getAddressCompany(id:number) 
+    {
+        try{
+            const response = await api.get(`address/company/${id}`, { headers: authHeader() })
+            return response.data
+        }catch (erro)
+        {
+            return erro;
+        }    
+    },
+
+    async getAddress(cep:string)
+    {
+        try{
+            const response = await api.get(`https://viacep.com.br/ws/${cep}/json/`)
+            return response;
+        }catch (error) {
+            return error;
+        }
+    },
+
+    async create(address:AddressType)
     {
         try {
-            const response = await api.post(`address/save`, { 
-                body: address
+            return await api.post(`address/save`, address, { headers: authHeader() }).then((response:any) => {
+                return response;
             });
-            return response.data;
         } catch (error) {
             return error;
         }
     },
 
-    async update(address:Address, id:number)
+    async update(address:AddressType, id:number)
     {
         try {
             const response = await api.patch(`address/update/${id}`, { 

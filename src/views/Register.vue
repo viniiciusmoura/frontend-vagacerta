@@ -28,6 +28,9 @@
                         :userData=userData />
                     
                 </v-stepper-window-item>
+                <v-stepper-window-item>
+                   
+                </v-stepper-window-item>
             </v-stepper-window>
         </v-stepper>    
    </v-container>
@@ -45,6 +48,7 @@ import stepFourCompany from '@/components/register/company/stepFourCompany.vue';
 
 import { ref } from 'vue';
 import { StepItem, StepWindow, UserRegister } from '@/types/register.types';
+
 
 const step = ref<number>(1);
 

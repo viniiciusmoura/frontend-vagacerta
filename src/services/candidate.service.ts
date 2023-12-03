@@ -7,7 +7,7 @@ export default {
     {
         try{
             const response = await api.get(`candidates`)
-            return response.data
+            return response
         }catch (erro)
         {
             return erro;
@@ -52,7 +52,7 @@ export default {
         try {
             return await api.post(`candidates/save`, cadidate, { headers: authHeader() }).then((response:any) => {
                 if(response.data){
-                    localStorage.setItem('candidateid',response.data.id);
+                    localStorage.setItem('candidateid', response.data.id);
                 }
                 return response;
             });

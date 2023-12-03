@@ -55,7 +55,9 @@
             </v-col>
         </v-row>
 
-        <v-row class="row d-flex">
+        <Address @address="setAddress"/>
+
+        <v-row class="row d-flex mt-5">
             <v-col cols="12">
                 <v-checkbox 
                     v-model="userData.user.termUser"
@@ -99,6 +101,9 @@ import MMessage from '@/components/shared/MMessage.vue';
 import companyService from '@/services/company.service';
 import userService from '@/services/user.service';
 import { Msg } from '@/types/generic.types';
+import Address from '@/components/shared/Address.vue';
+import { AddressType } from '@/types/address.types';
+import addressService from '@/services/address.service';
 
 
 const emit = defineEmits(['next']);
@@ -107,6 +112,8 @@ const loading = ref<boolean>(false);
 const datamsg = ref<Msg>({});
 const alertMsg = ref<boolean>(false);
 
+
+const address = ref<AddressType>();
 const props = defineProps({
     userData: {
         type: Object as () => UserRegister,
@@ -168,34 +175,28 @@ async function clickButton()
     company.value.user = response.data.id;
 
     const responseCompany:any = await companyService.create(company.value);
+    if (address?.value !== undefined) {
+        address.value.company = responseCompany.data.id;
+        const responseAddress: any = await addressService.create(address.value);
+    }
 
     datamsg.value = {message:"Empresa cadastrada com sucesso", color:"success", time: 3000};
     
     alertMsg.value = true;
     loading.value = false;
     emit('next');
-    
-    // if (response && typeof response === 'object' && 'data' in response) {
-    //     //Get token
-    //     const responseToken: any = await userService.login({email: response.data.email, password: props.userData.user.password}); 
-        
-    //     if(responseToken!=null || responseToken.data.token) {
-    //         company.value.user = response.data.id;
-
-    //         createCompany(company.value);
-    
-    //     }
-        
-        
-    // } else {
-    //     if(response.response.data.errors.includes("already exists"))
-    //         datamsg.value = {message:"Ops! Email já cadastrado", color:"primary", time: 3000};
-    //     else
-    //         datamsg.value = {message:"Error: "+response.response.data.errors, color:"erromsg", time: 3000};
-    // }
-   
 }
 
+function setAddress(addresst:AddressType) 
+{
+    if (validadtionsAddress(addresst)) {
+        address.value = addresst;    
+    }
+}
+
+function validadtionsAddress(objeto:Object) {
+  return Object.values(objeto).every(valor => valor !== '');
+}
 </script>
 
 <style lang="scss" scoped>

@@ -42,7 +42,7 @@
                 <v-row>
                     <v-col>
                         <v-text-field
-                            v-mode="experiencie.startDate"
+                            v-model="experiencie.startDate"
                             label="Data de inicio"
                             type="date"
                             variant="outlined"
@@ -129,7 +129,7 @@ async function clickButton()
 {
     loading.value = true
 
-    experiencie.value.user = localStorage.getItem('candidateid');
+    experiencie.value.candidate = localStorage.getItem('candidateid');
     
     const response: any = await experinceService.create(experiencie.value);
     if(response){

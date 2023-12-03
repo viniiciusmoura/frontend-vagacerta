@@ -2,18 +2,24 @@
     <v-container class="fill-height">
       <v-responsive class="align-center text-center fill-height">
         <v-row>
-          <v-col v-for="i in 6" :key="i" cols="4"> 
+          <v-col v-for="candidate in data" :key="candidate.id" cols="4"> 
             <v-card>
-              <v-card-title>Candidato</v-card-title>
+              <v-card-title>{{ candidate.name }}</v-card-title>
               <v-img src="@/assets/oportunidade.png" max-height="50" aspect-ratio="1.5"></v-img> 
               <v-card-text>
                 <div>
-                  Java Dev
+                  Sexo
+                  <v-chip>
+                    {{ candidate.sex }}
+                  </v-chip>
                 </div>
-                <div>
-                  Salário: 1.000,00
+                <div class="mt-2">
+                  Idade
+                  <v-chip color="primary">
+                    {{ idade(candidate.birthdate) }}
+                  </v-chip>
                 </div>
-                <v-btn color="primary" @click="dialog = true">
+                <v-btn color="primary" class="mt-5" @click="dialog = true">
                   Mais informações
                 </v-btn>
               </v-card-text>
@@ -35,9 +41,35 @@
     </v-container>
   </template>
   
-  <script setup>
-  import { ref } from 'vue';
+<script setup lang="ts">
+import candidateService from '@/services/candidate.service';
+import { CandidateDTO } from '@/types/dtos.types';
+import { onMounted } from 'vue';
+import { ref } from 'vue';
   
-  const dialog = ref(false);
-  </script>
+const dialog = ref(false);
+
+
+const data = ref<CandidateDTO[]>([]);
+
+async function candidates() 
+{
+  
+  const response: any = await candidateService.getAll();
+  data.value = response.data;
+
+}
+
+onMounted(() => {
+  candidates();
+})
+
+function idade(birthdate:string) 
+{
+  const dn = new Date(birthdate);
+  const datual = new Date();
+  
+  return datual.getFullYear() - dn.getFullYear();
+}
+</script>
   

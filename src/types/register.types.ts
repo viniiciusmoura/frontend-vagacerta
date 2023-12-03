@@ -28,7 +28,7 @@ export type Experience = {
     description: string;
     startDate: string;
     endDate: string;
-    user?: any;
+    candidate?: any;
 }
 
 export type Vacancies = {

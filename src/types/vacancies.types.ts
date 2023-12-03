@@ -1,4 +1,5 @@
 export type Vacancies = {
+    id?: number;
     office: string;
     description: string;
     salary: number;

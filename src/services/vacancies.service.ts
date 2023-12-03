@@ -14,6 +14,17 @@ export default {
         }    
     },
 
+    async getAllCompany(id:number) 
+    {
+        try{
+            const response = await api.get(`vacancies/company/${id}`, { headers: authHeader() })
+            return response.data
+        }catch (erro)
+        {
+            return erro;
+        }    
+    },
+
     async getSalary(salary:number) 
     {
         try{
