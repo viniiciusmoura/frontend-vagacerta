@@ -51,7 +51,8 @@
       Cadastrar
     </v-btn>
 
-    <v-menu offset-y rounded>
+    <v-menu offset-y rounded
+      v-if="token">
       <template v-slot:activator="{ props }">
         <v-btn
           v-bind="props"
@@ -64,10 +65,10 @@
       </template>
 
       <v-list>
-        <v-list-item to="/configuracao-empresa">
+        <v-list-item v-if="getTypeuser()==='cnpj'" to="/configuracao-empresa">
           <v-list-item-title>Configuração Empresa</v-list-item-title>
         </v-list-item>
-        <v-list-item to="/configuracao-candidato">
+        <v-list-item v-if="getTypeuser()==='cpf'" to="/configuracao-candidato">
           <v-list-item-title>Configuração Candidato</v-list-item-title>
         </v-list-item>
         <v-list-item>
@@ -84,4 +85,19 @@
 
 const token = localStorage.getItem("user");
 
+const userDataStore = localStorage.getItem("userData");
+
+function getTypeuser() {
+  if(userDataStore){
+    const objetoUser = JSON.parse(userDataStore);
+    
+    if(objetoUser.cnpj){
+      return 'cnpj';
+    }
+
+    if(objetoUser.cpf){
+      return 'cpf';
+    }
+  }
+}
 </script>

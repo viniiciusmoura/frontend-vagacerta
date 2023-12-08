@@ -16,10 +16,17 @@ export type CandidateRegister = {
 }
 
 export type CompanyRegister = {
+    id?: number;
     socialReason: string;
     cnpj: string;
     areaOfActivity: string;
     user?: number; 
+}
+
+export type UpdateCompany = {
+    socialReason: string;
+    cnpj: string;
+    areaOfActivity: string;
 }
 
 export type Experience = {

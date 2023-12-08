@@ -1,5 +1,5 @@
 import api from '../../vueconfig'
-import { CompanyRegister } from '@/types/register.types';
+import { CompanyRegister, UpdateCompany } from '@/types/register.types';
 import authHeader from './token.service';
 export default {
     
@@ -55,7 +55,7 @@ export default {
         try {
             return await api.post(`companies/save`, company, { headers: authHeader() }).then((response:any) => {
                 if(response.data){
-                    localStorage.setItem('companyid',response.data.id);
+                    localStorage.setItem('userData', JSON.stringify(response.data));
                 }
                 return response;
             });
@@ -64,13 +64,16 @@ export default {
         }
     },
 
-    async update(company:CompanyRegister, id:number)
+    async update(company:CompanyRegister)
     {
+        const update: UpdateCompany = {socialReason: company.socialReason, areaOfActivity: company.areaOfActivity, cnpj: company.cnpj};
         try {
-            const response = await api.patch(`companies/update/${id}`, { 
-                body: company
+            return await api.patch(`companies/update/${company.id}`, update, { headers: authHeader() }).then((response:any) => {
+                if(response.data){
+                    localStorage.setItem('userData', JSON.stringify(response.data));
+                }
+                return response;
             });
-            return response.data;
         } catch (error) {
             return error;
         }

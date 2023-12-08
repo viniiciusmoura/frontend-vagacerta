@@ -60,7 +60,6 @@
          <v-card-actions>
            <v-btn  @click="dialog = false" color="primary" class="ml-auto">Fechar</v-btn>
          </v-card-actions>
-        </v-card>
         </v-dialog>
 
       </v-responsive>
