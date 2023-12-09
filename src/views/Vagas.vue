@@ -1,6 +1,35 @@
 <template>
     <v-container class="fill-height">
       <v-responsive class="align-center text-center fill-height">
+
+        <div v-if="token">
+        <v-row class="pa-5">
+          <h3>Filtros de pesquisa</h3>
+        </v-row>
+
+        <v-row class="pa-2">
+          <v-col cols="4">
+            <v-card
+              class="mx-auto"
+              max-width="400"
+            >
+              <v-text-field
+                :loading="loadingSearch"
+                color="info"
+                v-model="valueSelect"
+                variant="outlined"
+                label="Pesquisar nas empresas"
+                append-inner-icon="mdi-magnify"
+                single-line
+                hide-details
+                @click:append-inner="onClick"
+              ></v-text-field>
+            </v-card>
+          </v-col>
+        </v-row>
+        </div>
+
+
         <v-row>
           <v-col v-for="i in data" :key="i.id" cols="4"> 
             <v-card>
@@ -55,7 +84,7 @@
 import vacanciesService from '@/services/vacancies.service';
 import { CompanyRegister } from '@/types/register.types';
 import { Vacancies } from '@/types/vacancies.types';
-import { onMounted } from 'vue';
+import { onMounted, watch } from 'vue';
 import { ref } from 'vue';
 
 const loading = ref<boolean>(false);
@@ -63,6 +92,8 @@ const dialog = ref(false);
 const data = ref<Vacancies[]>([]);
 const details = ref<Vacancies>();
 const token = ref<string|null>();
+const loadingSearch = ref<boolean>(false);
+const valueSelect = ref<string>('');
 
 
 
@@ -86,9 +117,15 @@ async function maisinfo(company:Vacancies)
   
   details.value = company
 
-
   loading.value = false
   dialog.value = true
+}
+
+async function onClick() {
+  loadingSearch.value = true;
+  const responseEmp:any = await vacanciesService.getOffice(valueSelect.value);
+  data.value = responseEmp  
+  loadingSearch.value = false
 }
 
 </script>

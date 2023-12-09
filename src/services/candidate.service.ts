@@ -1,5 +1,5 @@
 import api from '../../vueconfig'
-import { CandidateRegister } from '@/types/register.types';
+import { CandidateRegister, UpdateCadidate } from '@/types/register.types';
 import authHeader from './token.service';
 export default {
     
@@ -17,7 +17,7 @@ export default {
     async getCity(city:string) 
     {
         try{
-            const response = await api.get(`candidates/city/${city}`)
+            const response = await api.get(`candidates/city/${city}`, { headers: authHeader() })
             return response.data
         }catch (erro)
         {
@@ -28,7 +28,7 @@ export default {
     async getState(state:string) 
     {
         try{
-            const response = await api.get(`candidates/state/${state}`)
+            const response = await api.get(`candidates/state/${state}`, { headers: authHeader() })
             return response.data
         }catch (erro)
         {
@@ -39,7 +39,7 @@ export default {
     async getOffice(office:string) 
     {
         try{
-            const response = await api.get(`candidates/office/${office}`)
+            const response = await api.get(`candidates/office/${office}`,{ headers: authHeader() })
             return response.data
         }catch (erro)
         {
@@ -52,7 +52,7 @@ export default {
         try {
             return await api.post(`candidates/save`, cadidate, { headers: authHeader() }).then((response:any) => {
                 if(response.data){
-                    localStorage.setItem('candidateid', response.data.id);
+                    localStorage.setItem('userData', JSON.stringify(response.data));
                 }
                 return response;
             });
@@ -61,13 +61,16 @@ export default {
         }
     },
 
-    async update(cadidate:CandidateRegister, id:number)
+    async update(cadidate:CandidateRegister)
     {
+        const update: UpdateCadidate = {name: cadidate.name, generalRegister: cadidate.generalRegister, sex: cadidate.sex, birthdate: cadidate.birthdate};
         try {
-            const response = await api.patch(`candidates/update/${id}`, { 
-                body: cadidate
+            return await api.patch(`candidates/update/${cadidate.id}`,  update, { headers: authHeader() }).then((response:any) => {
+                if(response.data){
+                    localStorage.setItem('userData', JSON.stringify(response.data));
+                }
+                return response;
             });
-            return response.data;
         } catch (error) {
             return error;
         }

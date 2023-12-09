@@ -29,7 +29,8 @@
                     type="text"
                     :rules="cpfRules"
                     variant="outlined"
-                    required />
+                    required
+                    :readonly="props.candidate ? true : false" />
             </v-col>
         </v-row>
 
@@ -45,7 +46,7 @@
             </v-col>
             <v-col>
                 <v-text-field
-                    v-model="candidate.birthdate"
+                    v-model="candidate.birthdate "
                     label="Data nascimento"
                     type="date"
                     variant="outlined"
@@ -53,7 +54,7 @@
             </v-col>
         </v-row>
 
-        <v-row >
+        <v-row v-if="!props.candidate">
             <v-col>
                 <v-text-field
                     label="Email"
@@ -75,7 +76,7 @@
             </v-col>
         </v-row>
     
-        <Address @address="setAddress"/>
+        <Address v-if="!props.candidate" @address="setAddress"/>
 
         <v-row class="row d-flex">
             <v-col cols="12">
@@ -101,7 +102,7 @@
                 :disabled="!disableButton"
                 :loading="loading"
                 @click="clickButton">
-                Criar conta
+                {{ props.candidate ? "Salvar" : "Criar conta"}}
                 <template v-slot:loader>
                     <v-progress-circular indeterminate></v-progress-circular>
                 </template>
@@ -124,6 +125,7 @@ import { Msg } from '@/types/generic.types';
 import { AddressType } from '@/types/address.types';
 import addressService from '@/services/address.service';
 import Address from '@/components/shared/Address.vue';
+import { onMounted } from 'vue';
 
 const datamsg = ref<Msg>({});
 const alertMsg = ref<boolean>(false);
@@ -137,7 +139,8 @@ const props = defineProps({
     userData: {
         type: Object as () => UserRegister,
         required: true,
-    }
+    },
+    candidate: Boolean,
 });
 
 const candidate = ref<CandidateRegister>({
@@ -173,6 +176,18 @@ const disableButton = computed(() => {
 async function clickButton() 
 {
     loading.value = false
+
+    if (props.candidate) {
+        const responseCandidate: any = await candidateService.update(candidate.value);
+        if(responseCandidate != null){
+            datamsg.value = {message:"Candidato atualizada com sucesso", color:"info", time: 3000};
+
+            alertMsg.value = true;
+            loading.value = false;
+        }
+        return
+    }
+
     const response:any = await userService.create(props.userData.user);
     
     const responseToken: any = await userService.login({email: response.data.email, password: props.userData.user.password}); 
@@ -202,6 +217,27 @@ function setAddress(addresst:AddressType)
 
 function validadtionsAddress(objeto:Object) {
   return Object.values(objeto).every(valor => valor !== '');
+}
+
+onMounted(() => {
+  const userDataStore = localStorage.getItem("userData");
+  
+  if (userDataStore) {
+    const objetoUser = JSON.parse(userDataStore);
+    candidate.value = objetoUser;
+    candidate.value.user = objetoUser.user.id
+    props.userData.user.termUser = true
+    formatDate();
+  }
+
+});
+
+function formatDate() {
+      const date = new Date(candidate.value.birthdate);
+      const year = date.getFullYear();
+      const month = `${date.getMonth() + 1}`.padStart(2, '0');
+      const day = `${date.getDate()}`.padStart(2, '0');
+      candidate.value.birthdate = `${year}-${month}-${day}`;
 }
 </script>
 

@@ -66,7 +66,7 @@
                         :disabled="!disableButton"
                         :loading="loading"
                         @click="clickButton">
-                        Cadastrar
+                        {{ !$props.experience ? 'Cadastrar' : 'Editar'}}
                         <template v-slot:loader>
                             <v-progress-circular indeterminate></v-progress-circular>
                         </template>
@@ -74,10 +74,11 @@
                 </v-row>   
                 <v-row class="d-flex justify-center align-center">
                     <v-btn
+                        v-if="!$props.experience"
+                        @click="pular"
                         min-width="250"
                         color="primary"
-                        variant="outlined"
-                        to="/">
+                        variant="outlined">
                         Pular
                         <template v-slot:loader>
                             <v-progress-circular indeterminate></v-progress-circular>
@@ -96,10 +97,19 @@ import { computed } from '@vue/reactivity';
 import experinceService from '@/services/experince.service';
 import { Msg } from '@/types/generic.types';
 import MMessage from '@/components/shared/MMessage.vue';
+import { useRouter } from 'vue-router';
+import { onMounted } from 'vue';
 
 const loading = ref<boolean>(false);
 const datamsg = ref<Msg>({});
 const alertMsg = ref<boolean>(false);
+const router = useRouter();
+
+const props = defineProps({
+    experience: {
+        type: Object as () => Experience
+    }
+})
 
 const experiencie = ref<Experience>({
     company: '',
@@ -110,7 +120,7 @@ const experiencie = ref<Experience>({
 })
 
 const isValidRules = [
-    (v:string) => !!v || 'campo obrigatório',
+    (v:string) => !!v || 'Razão social é obrigatório',
     (v:string) => v.length > 3 || 'Deve ter no minimo 3 letras',
 ];
 
@@ -129,16 +139,38 @@ async function clickButton()
 {
     loading.value = true
 
-    experiencie.value.candidate = localStorage.getItem('candidateid');
-    
     const response: any = await experinceService.create(experiencie.value);
     if(response){
-        datamsg.value = {message:"Oportunidade cadastrada com sucesso", color:"success", time: 3000};
+        if(props.experience){
+            datamsg.value = {message:"Oportunidade alterada com sucesso", color:"info", time: 3000};
+        }else{
+            datamsg.value = {message:"Oportunidade cadastrada com sucesso", color:"success", time: 3000};
+        }
         alertMsg.value = true;
     }
     
     loading.value = false;
 }
+
+function pular() {
+    router.push('/').then(() => {
+    window.location.reload(); // Recarrega a página
+  });
+}
+
+onMounted(() => {
+  const userDataStore = localStorage.getItem("userData");
+  
+    if (props.experience) {
+        experiencie.value = props.experience;
+    }
+  
+    if (userDataStore) {
+        const objetoUser = JSON.parse(userDataStore);
+        experiencie.value.candidate = objetoUser.id;
+    }
+
+});
 </script>
 
 <style scoped>

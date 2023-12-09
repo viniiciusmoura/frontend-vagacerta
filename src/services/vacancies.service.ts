@@ -39,7 +39,7 @@ export default {
     async getOffice(office:string) 
     {
         try{
-            const response = await api.get(`vacancies/office/${office}`)
+            const response = await api.get(`vacancies/office/${office}`,  { headers: authHeader() })
             return response.data
         }catch (erro)
         {
@@ -72,7 +72,7 @@ export default {
     async delete(id:number)
     {
         try {
-            const response = await api.delete(`vacancies/delete/${id}`);
+            const response = await api.delete(`vacancies/delete/${id}`, { headers: authHeader() });
             return response.status;
         } catch (error) {
             return error;

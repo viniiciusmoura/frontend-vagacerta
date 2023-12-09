@@ -1,7 +1,7 @@
 <template>
     <v-card>
         <v-card-title>
-          <span class="headline">Gerar oportunidades</span>
+          <span v-if="!props.vacancies" class="headline">Gerar oportunidades</span>
         </v-card-title>
 
         <v-card-text>
@@ -68,13 +68,15 @@
                         :disabled="!disableButton"
                         :loading="loading"
                         @click="clickButton">
-                        Criar oportunidade
+                        {{ props.vacancies ? 'Salvar' : 'Criar oportunidade' }}
+                        
                         <template v-slot:loader>
                             <v-progress-circular indeterminate></v-progress-circular>
                         </template>
                     </v-btn>
                 </v-row>    
-                <v-row class="d-flex justify-center align-center">
+        
+                <v-row v-if="!props.vacancies" class="d-flex justify-center align-center">
                     <v-btn
                         min-width="250"
                         color="primary"
@@ -93,13 +95,19 @@
     <m-message v-model="alertMsg" :datamsg=datamsg />
 </template>
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { Vacancies } from '@/types/register.types';
 import { computed } from 'vue';
 import vacanciesService from '@/services/vacancies.service';
 import MMessage from '@/components/shared/MMessage.vue';
 import { Msg } from '@/types/generic.types';
 
+const emit = defineEmits(['exitModal']);
+const props = defineProps({
+    vacancies: {
+        type: Object as () => Vacancies
+    }
+});
 
 const vacancies = ref<Vacancies>({
     office: '',
@@ -135,16 +143,32 @@ async function clickButton()
 {
     loading.value = true;
      
-    vacancies.value.company = localStorage.getItem('companyid');
-
     const response: any = await vacanciesService.create(vacancies.value);
     if(response){
-        datamsg.value = {message:"Oportunidade cadastrada com sucesso", color:"success", time: 3000};
+        if (props.vacancies) {
+            datamsg.value = {message:"Oportunidade editada com sucesso", color:"info", time: 3000};
+        }else{
+            datamsg.value = {message:"Oportunidade cadastrada com sucesso", color:"success", time: 3000};
+        }
         alertMsg.value = true;
     }
     
     loading.value = false;
 }
+
+onMounted(() => {
+  const userDataStore = localStorage.getItem("userData");
+  
+    if (props.vacancies) {
+        vacancies.value = props.vacancies;
+    }
+  
+    if (userDataStore) {
+        const objetoUser = JSON.parse(userDataStore);
+        vacancies.value.company = objetoUser.id;
+    }
+
+});
 
 
 

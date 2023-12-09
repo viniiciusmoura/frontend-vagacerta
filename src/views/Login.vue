@@ -96,7 +96,9 @@ async function clickButton() {
 
     const response: any = await userService.login({email: email.value, password: password.value})
     if (response) {
-        router.push({path: '/', force: true})
+        router.push('/').then(() => {
+            window.location.reload(); // Recarrega a página
+        });
     }else{
         datamsg.value = {message:"Credenciais incorretas. Favor conferir", color:"erromsg", time: 3000};
         alertMsg.value = true   

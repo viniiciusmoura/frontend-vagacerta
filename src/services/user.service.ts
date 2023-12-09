@@ -23,6 +23,14 @@ export default {
                 if (response.data.token) {
                     localStorage.setItem('user', response.data.token);
                 }
+
+                if (response.data.candidate) {
+                    localStorage.setItem('userData', JSON.stringify(response.data.candidate));
+                }
+
+                if(response.data.company) {
+                    localStorage.setItem('userData', JSON.stringify(response.data.company));
+                }
                 return response;
             }).catch((error) => {
                 return error.response.data;

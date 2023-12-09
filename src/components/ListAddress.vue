@@ -1,58 +1,53 @@
 <template>
+    <h4>> Meus endereços</h4>
 
-    <v-card
-        class="mx-auto"
-        title="Endereço"
-        prepend-icon="mdi-home">
-
-        <v-card-text>
-            <v-form>
-                <v-row >
-                    <v-col cols="4" >
-                        <v-text-field
-                            label="CEP"
-                            v-model="address.cep"
-                            type="text"
-                            variant="outlined"
-                            required />
-                    </v-col>
-                    <v-col cols="2">
-                        <v-btn
-                            color="primary"
-                            :loading="loading"
-                            @click="sendCep"
-                            variant="outlined">
-                            consultar
-                        </v-btn>
-                    </v-col>
-                    <v-col cols="6">
-                        <v-card
-                        v-if="addressFormt!=''"
-                        class="mx-auto"
-                        width="300"
-                        color="indigo"
-                        variant="flat"
-                        >
-                            <v-card-item>
-                                <div>
-                                    <div class="text-h6 mb-1">
-                                        Endereço
-                                    </div>
-                                    <div class="text-caption">{{ addressFormt }}</div>
-                                </div>
-                            </v-card-item>
-                        </v-card>
-                    </v-col>
-                </v-row>
-                
-            </v-form>
-        </v-card-text>
-    </v-card>
-    
+    <v-btn color="primary"
+      class="align-center"
+      @click="openmodal"
+      append-icon="mdi-plus">
+      Adicionar
+    </v-btn>
+    <v-table theme="light">
+      <thead>
+        <tr>
+          <th class="text-left">
+            CEP
+          </th>
+          <th class="text-left">
+            Cidade
+          </th>
+          <th class="text-left">
+            Estado
+          </th>
+          <th class="text-left">
+            Bairro
+          </th>
+          <th class="text-left">
+            Complemento
+          </th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="item in data"
+          :key="item.id"
+        >
+          <td>{{ item.cep }}</td>
+          <td>{{ item.city }}</td>
+          <td>{{ item.state }}</td>
+          <td>{{ item.neighborhood }}</td>
+          <td>{{ item.address }}</td>  
+          <td> <v-btn class="ma-2" color="yellow" icon="mdi-pencil" @click="editarAddress(item)" ></v-btn> </td>
+          <td> <v-btn class="ma-2" color="red" icon="mdi-delete" @click="deleteAddress(item.id)"></v-btn> </td>
+        </tr>
+      </tbody>
+    </v-table>
     <v-dialog
         transition="dialog-top-transition"
         v-model="dialog"
-        width="500">
+        width="600">
         <v-card>
             <v-toolbar
                 color="primary"
@@ -63,24 +58,31 @@
                     <v-row>
                         <v-col
                         cols="12"
-                        sm="4">
+                        sm="6">
                             <v-text-field
                                 label="Cep"
                                 v-model="address.cep"
                                 persistent-hint
                                 type="number"
-                                readonly
                                 variant="outlined"
                             ></v-text-field>
                         </v-col>
+                        <v-col cols="12" sm="6">
+                          <v-btn
+                            color="primary"
+                            :loading="loading"
+                            @click="sendCep"
+                            variant="outlined">
+                            consultar
+                          </v-btn>
+                        </v-col>
                         <v-col
                         cols="12"
-                        sm="8">
+                        sm="12">
                             <v-text-field
                                 label="Cidade"
                                 v-model="address.city"
                                 persistent-hint
-                                readonly
                                 variant="outlined"
                             ></v-text-field>
                         </v-col>
@@ -93,8 +95,8 @@
                                 label="Estado"
                                 v-model="address.state"
                                 persistent-hint
-                                readonly
                                 variant="outlined"
+                                readonly
                             ></v-text-field>
                         </v-col>
                         <v-col
@@ -123,7 +125,7 @@
                 variant="flat"
                 color="primary"
                 @click="createAddress"
-                >Cadastrar</v-btn>
+                >{{ edit ? 'Cadastrar' : 'Atualizar'}}</v-btn>
                 <v-btn
                 variant="text"
                 @click="dialog = !dialog"
@@ -131,32 +133,69 @@
             </v-card-actions>
         </v-card>
     </v-dialog>
-    <MMessage v-model="alertMsg" :datamsg=datamsg />
-</template>
-<script lang="ts" setup>
+    <m-message :datamsg="datamsg" v-model="alertMsg" />
+  </template>
+<script setup lang="ts">
+
 import { AddressType } from '@/types/address.types';
 import { ref } from 'vue';
-import addressService from '@/services/address.service';
-import MMessage from './MMessage.vue';
+import MMessage from './shared/MMessage.vue';
 import { Msg } from '@/types/generic.types';
+import addressService from '@/services/address.service';
+import { onMounted } from 'vue';
 
 
 const loading = ref<boolean>(false)
 const dialog = ref<boolean>(false);
-const addressFormt = ref<string>('');
-const datamsg = ref<Msg>({});
+const data = ref<AddressType[]>([])
 const alertMsg = ref<boolean>(false);
+const datamsg = ref<Msg>({});
+const idCompany = ref<number>(0);
+const edit = ref<boolean>(false);
 
-const emit = defineEmits(['address']);
+const props = defineProps({
+  company: Boolean
+})
 
 const address = ref<AddressType>({
     cep: '',
     address: '',
     city: '',
     neighborhood: '',
-    state: ''
+    state: '',
 }); 
 
+
+async function addressAll(id:number) {
+    let response: any;
+    if(props.company){
+      response = await addressService.getAddressCompany(id);
+      address.value.company = id;
+    }else{
+      response = await addressService.getAddressCandidate(id);
+      address.value.candidate = id;
+    }
+    data.value = response;
+}
+
+
+async function createAddress() {
+  if(validadtionsAddress()) {
+    if (props.company) {
+      address.value.company = idCompany.value;
+    }else{
+      address.value.candidate = idCompany.value;
+    }
+
+    const responseAddress: any = await addressService.create(address.value);   
+    addressAll(idCompany.value);
+    dialog.value = !dialog.value;
+    datamsg.value = {message: "Atualizado com sucesso", color: "primary", time: 3000};
+  }else{
+    datamsg.value = {message: "Campos vazio, favor conferir", color: "erromsg", time: 3000};
+    alertMsg.value=true
+  }
+}
 
 async function sendCep()
 {
@@ -168,7 +207,7 @@ async function sendCep()
             address.value.neighborhood = response.data.bairro;
             address.value.state = response.data.uf;
             address.value.address = response.data.logradouro+ ", ";
-    
+            
             loading.value = false;
             dialog.value = true
         }else{
@@ -178,23 +217,46 @@ async function sendCep()
         }
     }
 }
+async function editarAddress(addressEdit:AddressType) {
+  edit.value = false;
+  address.value = addressEdit;
+  dialog.value = true;
+}
 
+function openmodal(){
+  address.value = {
+    cep: '',
+    address: '',
+    city: '',
+    neighborhood: '',
+    state: '',
+  };
+  edit.value = true;
+  dialog.value = true;
+}
 
-function createAddress() 
-{
-    if(validadtionsAddress()) {
-        dialog.value = !dialog.value;
-        addressFormt.value = `Endereço: ${address.value.city}, ${address.value.state}, ${address.value.neighborhood}
-        Complemento: ${address.value.address}`;
-        emit("address", address.value);
-    }else{
-        datamsg.value = {message: "Campos vazio, favor conferir", color: "erromsg", time: 3000};
-        alertMsg.value=true
-    }
-
+async function deleteAddress(id:number|undefined) {
+  if (id != undefined) {
+    const response: any = await addressService.delete(id);
+    data.value = data.value.filter(vaga => vaga.id !== id);
+  }
 }
 
 function validadtionsAddress() {
   return Object.values(address.value).every(valor => valor !== '');
 }
+
+onMounted(() => {
+  
+  const userDataStore = localStorage.getItem("userData");
+  
+  if (userDataStore) {
+    const objetoUser = JSON.parse(userDataStore);
+    idCompany.value = objetoUser.id; 
+    addressAll(objetoUser.id);
+  }
+})
+
+
 </script>
+

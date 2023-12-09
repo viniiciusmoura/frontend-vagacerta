@@ -32,7 +32,7 @@
                     required />
             </v-col>
         </v-row>
-        <v-row >
+        <v-row v-if="!$props.company">
             <v-col>
                 <v-text-field
                     v-model="userData.user.email"
@@ -55,9 +55,9 @@
             </v-col>
         </v-row>
 
-        <Address @address="setAddress"/>
+        <Address v-if="!$props.company" @address="setAddress"/>
 
-        <v-row class="row d-flex mt-5">
+        <v-row class="row d-flex mt-5" >
             <v-col cols="12">
                 <v-checkbox 
                     v-model="userData.user.termUser"
@@ -78,10 +78,10 @@
                 elevation="2"
                 color="primary"
                 variant="flat"
-                :disabled="!disableButton"
+                :disabled="props.company ? !disableButtonEdit : !disableButton"
                 :loading="loading"
                 @click="clickButton">
-                Criar conta
+                {{ !$props.company ? 'Criar conta' : 'Salvar' }}
                 <template v-slot:loader>
                     <v-progress-circular indeterminate></v-progress-circular>
                 </template>
@@ -104,6 +104,7 @@ import { Msg } from '@/types/generic.types';
 import Address from '@/components/shared/Address.vue';
 import { AddressType } from '@/types/address.types';
 import addressService from '@/services/address.service';
+import { onMounted } from 'vue';
 
 
 const emit = defineEmits(['next']);
@@ -118,7 +119,8 @@ const props = defineProps({
     userData: {
         type: Object as () => UserRegister,
         required: true,
-    }
+    },
+    company: Boolean
 });
 
 const company = ref<CompanyRegister>({
@@ -165,9 +167,34 @@ const disableButton = computed(() => {
     return arrayValidations.every(result => result === true);
 })
 
+const disableButtonEdit = computed(() => {
+
+    const arrayValidations = [
+        ...socialReasonRules.map((rule) => rule(company.value.socialReason)), 
+        ...cnpjRules.map((rule) => rule(company.value.cnpj)), 
+        ...areaOfActivityRules.map((rule) => rule(company.value.areaOfActivity)),
+    ];
+
+    return arrayValidations.every(result => result === true);
+})
+
 async function clickButton() 
 {
     loading.value = true;
+
+    if(props.company){
+        const responseCompany:any = await companyService.update(company.value);
+        if (responseCompany != null) {
+            datamsg.value = {message:"Empresa atualizada com sucesso", color:"info", time: 3000};
+
+            alertMsg.value = true;
+            loading.value = false;
+        }
+        return
+    }
+
+
+
     const response:any = await userService.create(props.userData.user);
 
     const responseToken: any = await userService.login({email: response.data.email, password: props.userData.user.password}); 
@@ -175,10 +202,11 @@ async function clickButton()
     company.value.user = response.data.id;
 
     const responseCompany:any = await companyService.create(company.value);
+    
     if (address?.value !== undefined) {
         address.value.company = responseCompany.data.id;
         const responseAddress: any = await addressService.create(address.value);
-    }
+    }   
 
     datamsg.value = {message:"Empresa cadastrada com sucesso", color:"success", time: 3000};
     
@@ -197,6 +225,17 @@ function setAddress(addresst:AddressType)
 function validadtionsAddress(objeto:Object) {
   return Object.values(objeto).every(valor => valor !== '');
 }
+
+onMounted(() => {
+  const userDataStore = localStorage.getItem("userData");
+  
+  if (userDataStore) {
+    const objetoUser = JSON.parse(userDataStore);
+
+    company.value = objetoUser;
+  }
+
+});
 </script>
 
 <style lang="scss" scoped>
