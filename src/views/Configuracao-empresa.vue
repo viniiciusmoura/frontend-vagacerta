@@ -9,7 +9,7 @@
           <v-list-item
             prepend-avatar="https://static.thenounproject.com/png/1819843-200.png"
             title="Usuário"
-            :subtitle="userData.user.email"
+            :subtitle="company?.socialReason"
             two-line
           >
           </v-list-item>
@@ -48,7 +48,6 @@ import { useRouter } from 'vue-router';
 
 const current = ref<any>(tabela);
 
-const idCompany = ref<Number>();
 const router = useRouter();
 const company = ref<CompanyRegister>();
 
@@ -72,7 +71,7 @@ onMounted(() => {
   
   if (userDataStore) {
     const objetoUser = userData ? JSON.parse(userDataStore) : {}
-    
+    company.value = objetoUser;
     userData.value.user.id = objetoUser.id;
     userData.value.user.email = objetoUser.user.email;
   }else{

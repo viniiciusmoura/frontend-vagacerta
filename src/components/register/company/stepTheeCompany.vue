@@ -185,8 +185,6 @@ async function clickButton()
     if(props.company){
         const responseCompany:any = await companyService.update(company.value);
         if (responseCompany != null) {
-            const userDataStore = localStorage.getItem("userData");
-
             datamsg.value = {message:"Empresa atualizada com sucesso", color:"info", time: 3000};
 
             alertMsg.value = true;
@@ -195,7 +193,7 @@ async function clickButton()
         return
     }
 
-    console.log("criar user");
+
 
     const response:any = await userService.create(props.userData.user);
 

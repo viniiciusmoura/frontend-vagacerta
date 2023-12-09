@@ -1,6 +1,42 @@
 <template>
     <v-container class="fill-height">
       <v-responsive class="align-center text-center">
+
+        <div v-if="token">
+        <v-row class="pa-5">
+          <h3>Filtros de pesquisa</h3>
+        </v-row>
+
+        <v-row class="pa-2">
+          <v-col cols="4">
+            <v-card
+              class="mx-auto"
+              max-width="400"
+            >
+              <v-text-field
+                :loading="loadingSearch"
+                color="info"
+                v-model="valueSelect"
+                variant="outlined"
+                label="Pesquisar nas empresas"
+                append-inner-icon="mdi-magnify"
+                single-line
+                hide-details
+                @click:append-inner="onClick"
+              ></v-text-field>
+            </v-card>
+          </v-col>
+          
+          <v-col cols="3" class="align-left">
+            <v-select
+              label="Estado"
+              v-model="stateSelect"
+              :items="states"
+              variant="outlined">
+            </v-select>
+          </v-col>
+        </v-row>
+        </div>
         <v-row>
           <v-col v-for="item in data" :key="item.id" cols="4"> 
             <v-card>
@@ -75,23 +111,30 @@ import { AddressType } from '@/types/address.types';
 import { CompanyDTO } from '@/types/dtos.types';
 import { Vacancies } from '@/types/vacancies.types';
 import { onBeforeMount } from 'vue';
-import { onMounted } from 'vue';
+import { onMounted, watch } from 'vue';
 import { ref } from 'vue';
 
 
 const dialog = ref(false);
-
+const stateSelect = ref<string>('');
 const data = ref<CompanyDTO[]>([]);
+const valueSelect = ref<string>('');
 const loading = ref<boolean>(false);
 const address = ref<AddressType[]>([]);
 const vacancies = ref<Vacancies[]>([]);
-
+const loadingSearch = ref<boolean>(false);
+const states = ref<string[]>([]);
 const token = ref<string|null>();
 
 async function companies() 
 {
   
   const response: any = await companyService.getAll();
+  if(token.value){
+    const responseAddres: any = await addressService.getAll();
+    states.value = responseAddres.map((item:any) => item.state).filter((state:string) => state !== undefined);
+  }
+
   data.value = response.data;
 
 }
@@ -117,6 +160,18 @@ async function maisinfo(id:number)
   loading.value = false
   dialog.value = true
 }
+
+async function onClick() {
+  loadingSearch.value = true;
+  const responseEmp:any = await companyService.getCity(valueSelect.value);
+  data.value = responseEmp  
+  loadingSearch.value = false
+}
+
+watch(stateSelect, async (newQuestion, oldQuestion) =>{
+  const responseEmp:any = await companyService.getState(stateSelect.value);
+  data.value = responseEmp;
+})
 
 </script>
   

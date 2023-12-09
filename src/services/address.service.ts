@@ -6,7 +6,7 @@ export default {
     async getAll() 
     {
         try{
-            const response = await api.get(`address`)
+            const response = await api.get(`address`,  { headers: authHeader() })
             return response.data
         }catch (erro)
         {

@@ -7,6 +7,7 @@ export type UserRegister = {
 }
 
 export type CandidateRegister = {
+    id?: number;
     name: string;
     generalRegister: string;
     cpf: string;
@@ -27,6 +28,13 @@ export type UpdateCompany = {
     socialReason: string;
     cnpj: string;
     areaOfActivity: string;
+}
+
+export type UpdateCadidate ={
+    name: string;
+    generalRegister: string;
+    sex: string;
+    birthdate: string;
 }
 
 export type Experience = {

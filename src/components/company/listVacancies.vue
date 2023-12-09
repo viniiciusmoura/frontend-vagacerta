@@ -1,5 +1,5 @@
 <template>
-    <h4>> Minhas vagas</h4>
+    <h4>>> Minhas vagas</h4>
 
     <v-btn color="primary"
       class="align-center"

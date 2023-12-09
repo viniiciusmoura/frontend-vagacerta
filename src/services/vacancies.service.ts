@@ -39,7 +39,7 @@ export default {
     async getOffice(office:string) 
     {
         try{
-            const response = await api.get(`vacancies/office/${office}`)
+            const response = await api.get(`vacancies/office/${office}`,  { headers: authHeader() })
             return response.data
         }catch (erro)
         {

@@ -10,7 +10,7 @@ const routes = [
       {
         path: '',
         name: '',
-        component: Home,
+        component: () => import('@/views/Vagas.vue'),
       },
     ],
   },

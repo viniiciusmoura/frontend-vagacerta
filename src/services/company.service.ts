@@ -20,7 +20,7 @@ export default {
     async getCity(city:string) 
     {
         try{
-            const response = await api.get(`companies/city/${city}`)
+            const response = await api.get(`companies/city/${city}`, { headers: authHeader() })
             return response.data
         }catch (erro)
         {
@@ -31,7 +31,7 @@ export default {
     async getState(state:string) 
     {
         try{
-            const response = await api.get(`companies/state/${state}`)
+            const response = await api.get(`companies/state/${state}`, { headers: authHeader() })
             return response.data
         }catch (erro)
         {
@@ -42,7 +42,7 @@ export default {
     async getOffice(office:string) 
     {
         try{
-            const response = await api.get(`companies/office/${office}`)
+            const response = await api.get(`companies/office/${office}`, { headers: authHeader() })
             return response.data
         }catch (erro)
         {

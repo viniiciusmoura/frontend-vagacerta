@@ -72,7 +72,7 @@
           <v-list-item-title>Configuração Candidato</v-list-item-title>
         </v-list-item>
         <v-list-item>
-          <v-list-item-title>Sair</v-list-item-title>
+          <v-list-item-title @click="exit">Sair</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-menu>
@@ -82,9 +82,12 @@
 </template>
 
 <script lang="ts" setup>
+import exitService from '@/services/exit.service';
+import { useRouter } from 'vue-router';
+
 
 const token = localStorage.getItem("user");
-
+const router = useRouter();
 const userDataStore = localStorage.getItem("userData");
 
 function getTypeuser() {
@@ -99,5 +102,13 @@ function getTypeuser() {
       return 'cpf';
     }
   }
+}
+
+function exit() {
+  router.push('/').then(() => {
+    exitService.exitUser()
+    window.location.reload(); // Recarrega a página
+  });
+
 }
 </script>

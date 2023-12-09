@@ -51,7 +51,7 @@ export default {
     async delete(id:number)
     {
         try {
-            const response = await api.delete(`experiences/delete/${id}`);
+            const response = await api.delete(`experiences/delete/${id}`, {headers: authHeader()});
             return response.status;
         } catch (error) {
             return error;

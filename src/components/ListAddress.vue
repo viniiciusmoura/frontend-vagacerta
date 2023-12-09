@@ -152,6 +152,11 @@ const alertMsg = ref<boolean>(false);
 const datamsg = ref<Msg>({});
 const idCompany = ref<number>(0);
 const edit = ref<boolean>(false);
+
+const props = defineProps({
+  company: Boolean
+})
+
 const address = ref<AddressType>({
     cep: '',
     address: '',
@@ -162,15 +167,26 @@ const address = ref<AddressType>({
 
 
 async function addressAll(id:number) {
-    const response: any = await addressService.getAddressCompany(id);
+    let response: any;
+    if(props.company){
+      response = await addressService.getAddressCompany(id);
+      address.value.company = id;
+    }else{
+      response = await addressService.getAddressCandidate(id);
+      address.value.candidate = id;
+    }
     data.value = response;
-    address.value.company = id;
 }
 
 
 async function createAddress() {
   if(validadtionsAddress()) {
-    address.value.company = idCompany.value;
+    if (props.company) {
+      address.value.company = idCompany.value;
+    }else{
+      address.value.candidate = idCompany.value;
+    }
+
     const responseAddress: any = await addressService.create(address.value);   
     addressAll(idCompany.value);
     dialog.value = !dialog.value;
