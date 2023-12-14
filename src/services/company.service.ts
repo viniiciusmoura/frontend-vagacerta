@@ -28,6 +28,17 @@ export default {
         }    
     },
 
+    async getSearch(search:string) 
+    {
+        try{
+            const response = await api.get(`companies/search/${search}`, { headers: authHeader() })
+            return response.data
+        }catch (erro)
+        {
+            return erro;
+        }    
+    },
+
     async getState(state:string) 
     {
         try{

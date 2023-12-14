@@ -146,8 +146,8 @@ async function candidates()
   
   const response: any = await candidateService.getAll();
   if(token.value){
-    const responseAddres: any = await addressService.getAll();
-    states.value = responseAddres.map((item:any) => item.state).filter((state:string) => state !== undefined);
+    const responseAddres: any = await addressService.getAllStates();
+    states.value = responseAddres
   }
   data.value = response.data;
 
