@@ -81,7 +81,7 @@
                         min-width="250"
                         color="primary"
                         variant="outlined"
-                        to="/">
+                        @click="pular">
                         Pular
                         <template v-slot:loader>
                             <v-progress-circular indeterminate></v-progress-circular>
@@ -101,7 +101,8 @@ import { computed } from 'vue';
 import vacanciesService from '@/services/vacancies.service';
 import MMessage from '@/components/shared/MMessage.vue';
 import { Msg } from '@/types/generic.types';
-
+import { useRouter } from 'vue-router';
+const router = useRouter();
 const emit = defineEmits(['exitModal']);
 const props = defineProps({
     vacancies: {
@@ -182,7 +183,11 @@ function clearVacancies() {
 
 // Exemplo de uso da função para limpar as vagas
 
-
+function pular() {
+    router.push('/').then(() => {
+    window.location.reload(); // Recarrega a página
+  });
+}
 </script>
 
 <style scoped>
