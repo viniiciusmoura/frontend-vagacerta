@@ -131,8 +131,8 @@ async function companies()
   
   const response: any = await companyService.getAll();
   if(token.value){
-    const responseAddres: any = await addressService.getAll();
-    states.value = responseAddres.map((item:any) => item.state).filter((state:string) => state !== undefined);
+    const responseAddres: any = await addressService.getAllStates();
+    states.value = responseAddres
   }
 
   data.value = response.data;
@@ -162,10 +162,12 @@ async function maisinfo(id:number)
 }
 
 async function onClick() {
-  loadingSearch.value = true;
-  const responseEmp:any = await companyService.getCity(valueSelect.value);
-  data.value = responseEmp  
-  loadingSearch.value = false
+  if(valueSelect.value != ''){
+    loadingSearch.value = true;
+    const responseEmp:any = await companyService.getSearch(valueSelect.value);
+    data.value = responseEmp  
+    loadingSearch.value = false
+  }
 }
 
 watch(stateSelect, async (newQuestion, oldQuestion) =>{

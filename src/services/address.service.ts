@@ -14,6 +14,17 @@ export default {
         }    
     },
 
+    async getAllStates() 
+    {
+        try{
+            const response = await api.get(`address/states`,  { headers: authHeader() })
+            return response.data
+        }catch (erro)
+        {
+            return erro;
+        }    
+    },
+
     async getAddressCompany(id:number) 
     {
         try{

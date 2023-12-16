@@ -81,7 +81,7 @@
                         min-width="250"
                         color="primary"
                         variant="outlined"
-                        to="/">
+                        @click="pular">
                         Pular
                         <template v-slot:loader>
                             <v-progress-circular indeterminate></v-progress-circular>
@@ -101,7 +101,8 @@ import { computed } from 'vue';
 import vacanciesService from '@/services/vacancies.service';
 import MMessage from '@/components/shared/MMessage.vue';
 import { Msg } from '@/types/generic.types';
-
+import { useRouter } from 'vue-router';
+const router = useRouter();
 const emit = defineEmits(['exitModal']);
 const props = defineProps({
     vacancies: {
@@ -148,6 +149,7 @@ async function clickButton()
         if (props.vacancies) {
             datamsg.value = {message:"Oportunidade editada com sucesso", color:"info", time: 3000};
         }else{
+            clearVacancies();
             datamsg.value = {message:"Oportunidade cadastrada com sucesso", color:"success", time: 3000};
         }
         alertMsg.value = true;
@@ -170,8 +172,22 @@ onMounted(() => {
 
 });
 
+function clearVacancies() {
+    vacancies.value.office = '';
+    vacancies.value.description = '';
+    vacancies.value.salary = 0.00;
+    vacancies.value.foodVoucher = false;
+    vacancies.value.mealVoucher = false;
+    vacancies.value.formContract = '';
+}
 
+// Exemplo de uso da função para limpar as vagas
 
+function pular() {
+    router.push('/').then(() => {
+    window.location.reload(); // Recarrega a página
+  });
+}
 </script>
 
 <style scoped>
